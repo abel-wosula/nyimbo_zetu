@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 09, 2025 at 11:53 AM
+-- Host: localhost
+-- Generation Time: Jun 10, 2025 at 12:29 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -57,7 +57,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
 (2, '2014_10_12_100000_create_password_resets_table', 1),
 (3, '2019_08_19_000000_create_failed_jobs_table', 1),
-(4, '2019_12_14_000001_create_personal_access_tokens_table', 1);
+(4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(5, '2025_06_09_102304_update_users_table_add_new_columns', 1);
 
 -- --------------------------------------------------------
 
@@ -98,14 +99,28 @@ CREATE TABLE `personal_access_tokens` (
 
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `phone_number` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `email`, `first_name`, `last_name`, `phone_number`, `address`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'hthompson@example.net', 'Tanya Keebler', 'Conn', '346.821.9714', '121 Uriah Gardens Suite 003\nPort Beverly, NC 37910-2768', '2025-06-10 05:27:47', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'vmpz9DWs55', '2025-06-10 05:27:47', '2025-06-10 05:27:47'),
+(2, 'yjacobson@example.org', 'Rod Green', 'Bruen', '847-219-4296', '9156 Feil Mountain Apt. 488\nSchambergerchester, MD 94804', '2025-06-10 05:27:47', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'C4vNht2Mrc', '2025-06-10 05:27:47', '2025-06-10 05:27:47'),
+(3, 'alexane.schimmel@example.net', 'Abner Cummerata', 'Hansen', '1-585-307-7016', '2722 Vanessa Landing Apt. 254\nKuhicland, OH 01290', '2025-06-10 05:27:47', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'UUSV9EJvQ5', '2025-06-10 05:27:47', '2025-06-10 05:27:47'),
+(4, 'tharris@example.net', 'Dr. Rachael Vandervort IV', 'Beer', '959-819-8459', '100 Renner Prairie\nPort Verdaborough, IA 90284', '2025-06-10 05:27:47', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'lUanYXD7xy', '2025-06-10 05:27:47', '2025-06-10 05:27:47'),
+(5, 'giovani.boyer@example.org', 'Prof. Rubye Gibson', 'Larkin', '(531) 599-8636', '5477 Elvis Ports Apt. 380\nNorth Avisstad, MO 63190-8227', '2025-06-10 05:27:47', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Am5G5Bj75I', '2025-06-10 05:27:47', '2025-06-10 05:27:47');
 
 --
 -- Indexes for dumped tables
@@ -159,7 +174,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -171,7 +186,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
