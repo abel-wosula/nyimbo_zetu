@@ -1,0 +1,26 @@
+type User {
+    id: ID!
+    email: String!
+    first_name: String!
+    last_name: String!
+    phone_number: String!
+    address: String!
+    email_verified_at: String!
+    password: String!
+    created_at: String!
+    updated_at: String!
+}
+
+input CreateUserInput {
+    email: String!
+    first_name: String!
+    last_name: String!
+    phone_number: String!
+    address: String!
+    password: String!
+}
+
+type CreateUserMutationResponse {
+    message: String!
+    user: User!
+}
