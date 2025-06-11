@@ -1,0 +1,5 @@
+type AuthPayLoad{
+    token:String
+     user: User
+}
+
