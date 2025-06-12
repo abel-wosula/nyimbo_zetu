@@ -1,4 +1,4 @@
-type User{
+type User {
     id: ID!
     email: String!
     first_name: String!
@@ -11,9 +11,7 @@ type User{
     updated_at: String!
 }
 
-
-input CreateUserInput{
- 
+input CreateUserInput {
     email: String!
     first_name: String!
     last_name: String!
@@ -22,7 +20,7 @@ input CreateUserInput{
     password: String!
 }
 
-type CreateUserMutationResponse{
+type CreateUserMutationResponse {
     message: String!
     user: User!
 }

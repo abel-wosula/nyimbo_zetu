@@ -1,6 +1,6 @@
 extend type Mutation {
     createUser(input: CreateUserInput! @spread): CreateUserMutationResponse!
         @field(
-            resolver: "App\\Graphql\\Mutations\\CreateUserMutation@createUser"
+            resolver: "App\\GraphQL\\Mutations\\CreateUserMutation@createUser"
         )
 }
