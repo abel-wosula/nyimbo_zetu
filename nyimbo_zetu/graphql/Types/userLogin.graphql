@@ -1,5 +1,4 @@
-type AuthPayLoad{
-    token:String
-     user: User
+type AuthPayload {
+    token: String
+    user: User
 }
-
