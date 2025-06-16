@@ -1,8 +1,9 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig } from 'vite'
-import graphqlLoader from "vite-plugin-graphql-loader";
+import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import graphqlLoader from "vite-plugin-graphql-loader";
+
 
 import vueDevTools from 'vite-plugin-vue-devtools'
 
