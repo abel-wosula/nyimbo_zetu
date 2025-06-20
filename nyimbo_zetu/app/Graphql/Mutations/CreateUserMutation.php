@@ -25,6 +25,7 @@ class CreateUserMutation
         return [
             'user' => $user,
             'message' => 'User created successfully',
+            
         ];
     }
 }
