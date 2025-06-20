@@ -1,7 +1,7 @@
 <template>
-  <section class="bg-gray-50 dark:bg-gray-900">
+  <section class="bg-gray-50 dark:bg-gray-900 h-full">
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-screen lg:py-0"
     >
       <a
         href="#"
@@ -23,7 +23,7 @@
           >
             Sign in to your account
           </h1>
-          <form class="space-y-4 md:space-y-6" action="#">
+          <form class="space-y-4 md:space-y-6" @submit.prevent="handleLogin">
             <div>
               <label
                 for="email"
@@ -31,6 +31,7 @@
                 >Your email</label
               >
               <input
+                v-model="form.email"
                 type="email"
                 name="email"
                 id="email"
@@ -46,6 +47,8 @@
                 >Password</label
               >
               <input
+                v-model="form.password"
+                autocomplete="current-password"
                 type="password"
                 name="password"
                 id="password"
@@ -79,9 +82,10 @@
             </div>
             <button
               type="submit"
+              :disabled="loading"
               class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
-              Sign in
+              {{ loading ? "Logging in..." : "Log in" }}
             </button>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
               Don’t have an account yet?
@@ -98,4 +102,58 @@
   </section>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useMutation } from "@vue/apollo-composable";
+import { LOGIN_USER } from "@/graphql/Mutations/userLogin.js";
+
+const router = useRouter();
+
+const form = ref({
+  email: "",
+  password: "",
+});
+const loading = ref(false);
+const { mutate: userLogin, onDone, onError } = useMutation(LOGIN_USER);
+
+const handleLogin = async () => {
+  try {
+    if (!form.value.email || !form.value.password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const variables = {
+      email: form.value.email,
+      password: form.value.password,
+    };
+
+    console.log("Sending variables:", variables);
+
+    const { data } = await userLogin({
+      email: form.value.email,
+      password: form.value.password,
+    });
+    console.log("Login response:", data);
+
+    if (!data || !data.userLogin || !data.userLogin.token) {
+      alert("Invalid credentials or empty token");
+      return;
+    }
+
+    localStorage.setItem("token", data.userLogin.token);
+    router.push("/");
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Login failed: " + error.message);
+  }
+};
+onDone(({ data }) => {
+  localStorage.setItem("Token", data.userLogin.token);
+  router.push("/");
+});
+onError((error) => {
+  console.error("Login failed:", error.message);
+});
+</script>
