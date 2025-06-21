@@ -1,4 +1,5 @@
 <template>
+  <Header />
   <section class="bg-gray-50 dark:bg-gray-900 h-full">
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-screen lg:py-0"
@@ -75,7 +76,7 @@
                 </div>
               </div>
               <a
-                href="#"
+                href="/reset_password"
                 class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >Forgot password?</a
               >
@@ -107,6 +108,7 @@ import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { LOGIN_USER } from "@/graphql/Mutations/userLogin.js";
+import Header from "@/components/header/index/Main.vue";
 
 const router = useRouter();
 
