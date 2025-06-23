@@ -1,8 +1,5 @@
 <template>
-<<<<<<< HEAD
-=======
   <Header />
->>>>>>> origin/main
   <section class="bg-gray-50 dark:bg-gray-900">
     <div
       class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0"
@@ -197,10 +194,8 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { REGISTER_USER } from "@/graphql/Mutations/createUser";
-<<<<<<< HEAD
-=======
 import Header from "@/components/header/index/Main.vue";
->>>>>>> origin/main
+
 
 const router = useRouter();
 const loading = ref(false);
