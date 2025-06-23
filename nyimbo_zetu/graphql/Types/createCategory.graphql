@@ -1,0 +1,15 @@
+type Category {
+    id: ID!
+    name: String!
+    created_at: String!
+    updated_at: String!
+}
+
+input CreateCategoryInput {
+    name: String!
+}
+
+type CreateCategoryMutationResponse {
+    message: String!
+    category: Category!
+}

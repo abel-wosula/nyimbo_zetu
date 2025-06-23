@@ -1,0 +1,15 @@
+type SubCategory {
+    id: ID!
+    name: String!
+    category_id: ID!
+    created_at: String!
+}
+
+input CreateSubCategoryInput {
+    category_id: ID!
+    name: String!
+}
+type CreateSubCategoryMutationResponse {
+    message: String!
+    subcategory: SubCategory!
+}
