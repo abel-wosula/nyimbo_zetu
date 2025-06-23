@@ -1,0 +1,30 @@
+type Song {
+    id: ID!
+    title: String!
+    lyrics: String!
+    composer: String!
+    midi: String!
+    pdf: String!
+    ytlink: String!
+    subcategory_id: ID!
+    user_id: ID!
+    created_at: String!
+    updated_at: String!
+}
+
+input CreateSongInput {
+    title: String!
+    lyrics: String!
+    composer: String!
+    midi: String!
+    pdf: String!
+    ytlink: String!
+    subcategory_id: ID!
+    user_id: ID!
+  
+}
+
+type CreateSongMutationResponse {
+    message: String!
+    song: Song!
+}

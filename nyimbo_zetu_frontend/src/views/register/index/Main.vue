@@ -197,7 +197,6 @@ import { useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { REGISTER_USER } from "@/graphql/Mutations/createUser";
 import Header from "@/components/header/index/Main.vue";
-
 const router = useRouter();
 const loading = ref(false);
 

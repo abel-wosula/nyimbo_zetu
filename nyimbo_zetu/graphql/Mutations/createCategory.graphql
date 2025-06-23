@@ -1,0 +1,6 @@
+extend type Mutation {
+    createCategory(input: CreateCategoryInput! @spread): CreateCategoryMutationResponse!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\CreateCategoryMutation@createCategory"
+        )
+}

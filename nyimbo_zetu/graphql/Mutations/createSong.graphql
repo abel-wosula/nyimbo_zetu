@@ -1,0 +1,6 @@
+extend type Mutation {
+    createSong(input: CreateSongInput! @spread): CreateSongMutationResponse!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\CreateSongMutation@createSong"
+        )
+}

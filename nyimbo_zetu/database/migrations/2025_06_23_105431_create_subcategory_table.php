@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('subcategory', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement(); // Corrected the syntax for auto-incrementing ID
             $table->string('name')->unique();
+            $table->unsignedBigInteger('category_id');
             $table->timestamps();
         });
     }
