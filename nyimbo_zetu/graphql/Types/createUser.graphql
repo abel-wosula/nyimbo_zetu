@@ -24,3 +24,8 @@ type CreateUserMutationResponse {
     message: String!
     user: User!
 }
+
+type AuthPayload {
+    token: String!
+    user: User
+}

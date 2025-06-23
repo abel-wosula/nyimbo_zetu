@@ -8,7 +8,7 @@ import { provideApolloClient } from '@vue/apollo-composable'
 import apolloClient from './apollo.default_client.config.js'
 provideApolloClient(apolloClient)
 
-createApp(App).mount('#app')
+
 
 const app = createApp(App)
 app.use(router)
