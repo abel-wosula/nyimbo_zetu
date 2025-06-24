@@ -1,4 +1,4 @@
 extend type Query {
-    createSong: [Song!]! @paginate(defaultCount: 10)
+    songs: [Song!]! @paginate(defaultCount: 10)
 }
 
