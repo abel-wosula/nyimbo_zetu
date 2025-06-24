@@ -12,7 +12,7 @@
       </p>
     </div>
     <div class="grid grid-cols-12 items-center gap-2">
-      <div class="filters col-span-12 p-1 flex flex-row">
+      <div class="filters col-span-1 p-1 flex flex-row">
         <div class="flex items-start justify-between w-full">
           <div class="form-group flex flex-row items-center">
             <label for="search" class="mr-2">Search</label>
@@ -25,9 +25,9 @@
           </div>
         </div>
       </div>
-      <div class="col-span-12 p-4 overflow-x-auto">
-        <div class="w-full">
-          <table class="w-full text-sm bg-blue-200 rounded-lg">
+      <div class=" ">
+        <div class="">
+          <table class="text-sm bg-blue-200 rounded-lg">
             <thead class="border-b border-gray-600 font-semibold bg-slate-300">
               <tr>
                 <th class="p-3 text-left">Song Title</th>
