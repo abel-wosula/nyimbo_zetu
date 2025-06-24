@@ -16,8 +16,8 @@ input CreateSongInput {
     title: String!
     lyrics: String!
     composer: String!
-    midi: String!
-    pdf: String!
+    midi: Upload!
+    pdf: Upload!
     ytlink: String!
     subcategory_id: ID!
     user_id: ID!
@@ -26,5 +26,5 @@ input CreateSongInput {
 
 type CreateSongMutationResponse {
     message: String!
-    song: Song!
+    upload: Song
 }
