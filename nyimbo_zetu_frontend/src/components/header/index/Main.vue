@@ -5,7 +5,7 @@
         class="flex flex-wrap justify-between items-center mx-auto min-w-xs max-w-screen-xl"
       >
         <!-- Logo -->
-        <a href="/" class="flex items-center">
+        <a href="/home" class="flex items-center">
           <img
             src="../../../assets/android-chrome-512x512.png"
             class="mr-3 h-6 rounded-full sm:h-9"
@@ -75,42 +75,42 @@
           >
             <li>
               <a
-                href="/"
+                href="/home"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Home</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="/songs"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Songs</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="/seasons"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Seasons</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="trending"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Trending Songs</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="team"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Team</a
               >
             </li>
             <li>
               <a
-                href="#"
+                href="contact"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Contact</a
               >
@@ -164,7 +164,7 @@
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
-          <li><a href="/" @click="closeMenu">Home</a></li>
+          <li><a href="/home" @click="closeMenu">Home</a></li>
           <li><a href="#" @click="closeMenu">Songs</a></li>
           <li><a href="#" @click="closeMenu">Seasons</a></li>
           <li><a href="#" @click="closeMenu">Trending Songs</a></li>
