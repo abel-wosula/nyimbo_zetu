@@ -17,7 +17,7 @@ class CreateSongMutation
             empty($args['midi']) || !$args['midi'] instanceof UploadedFile
         ) {
             return [
-                'message' => 'Invalid file upload. Both PDF and MIDI are required.',
+                'message' => 'Invalid file upload. Both PDF and audio are required.',
                 'upload' => null,
             ];
         }
@@ -32,33 +32,35 @@ class CreateSongMutation
         $userId = $args['user_id'] ?? null;
 
         // Validate file types
-        if ($pdf->getClientOriginalExtension() !== 'pdf') {
+        if (!in_array($pdf->getClientOriginalExtension(), ['pdf'])) {
             return [
                 'message' => 'The file must be a PDF.',
                 'upload' => null,
             ];
         }
 
-        if ($midi->getClientOriginalExtension() !== 'mid') {
+        $allowedAudioExtensions = ['mp3', 'mid', 'wav'];
+        $audioExtension = $midi->getClientOriginalExtension();
+
+        if (!in_array($audioExtension, $allowedAudioExtensions)) {
             return [
-                'message' => 'The midi must be a MIDI file.',
+                'message' => 'The audio must be a MP3, MIDI, or WAV file.',
                 'upload' => null,
             ];
         }
 
-        // *Extract the Original File Names and Format Them*
+        // Extract and slugify file names
         $fileOriginalName = pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME);
         $audioOriginalName = pathinfo($midi->getClientOriginalName(), PATHINFO_FILENAME);
 
-        // *Slugify the filenames to remove special characters*
         $fileName = Str::slug($fileOriginalName) . "-" . time() . ".pdf";
-        $audioName = Str::slug($audioOriginalName) . "-" . time() . ".mid";
+        $audioName = Str::slug($audioOriginalName) . "-" . time() . "." . $audioExtension;
 
-        // *Store the files with formatted names*
+        // Store the files
         $filePath = $pdf->storeAs('uploads/pdf', $fileName, 'public');
         $audioPath = $midi->storeAs('uploads/midi', $audioName, 'public');
 
-        // *Save to database with readable filenames*
+        // Save to DB
         $upload = Song::create([
             'title' => $title,
             'composer' => $composer,
@@ -66,8 +68,8 @@ class CreateSongMutation
             'lyrics' => $lyrics,
             'subcategory_id' => $subcategoryId,
             'user_id' => $userId,
-            'pdf' => $filePath, // Store the path to the PDF file
-            'midi' => $audioPath, // Store the path to the MIDI file
+            'pdf' => "/storage/$filePath",
+            'midi' => "/storage/$audioPath",
             'message' => 'File uploaded successfully',
         ]);
 

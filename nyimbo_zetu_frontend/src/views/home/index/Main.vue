@@ -30,7 +30,7 @@
           <table class="w-full text-sm bg-blue-200 rounded-lg">
             <thead class="border-b border-gray-600 font-semibold bg-slate-300">
               <tr>
-                <th class="p-3 text-left">Music Title</th>
+                <th class="p-3 text-left">Song Title</th>
                 <th class="p-3 text-left">Lyrics</th>
                 <th class="p-3 text-left">Composer</th>
                 <th class="p-3 text-left">Midi</th>
@@ -56,22 +56,18 @@
                   class="border-b border-opacity-20 hover:bg-blue-100 transition-colors"
                 >
                   <td class="px-2 py-4 font-medium">{{ song.title }}</td>
+                  <td class="px-2 py-4 font-medium">{{ song.lyrics }}</td>
+                  <td class="px-2 py-4 font-medium">{{ song.composer }}</td>
                   <td class="px-2 py-4">
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">{{ getFileName(song.midi) }}</span>
                       <audio controls class="w-48 audio-player">
-                        <source
-                          :src="getFullUrl(song.midi)"
-                          type="audio/midi"
-                        />
+                        <source :src="getFullUrl(song.midi)" />
                         Your browser does not support the audio element.
                       </audio>
                     </div>
                   </td>
-                  <td class="px-2 py-4">{{ song.composer || "N/A" }}</td>
                   <td class="px-2 py-4">
                     <div class="flex flex-col gap-2">
-                      <span class="text-sm">{{ getFileName(song.pdf) }}</span>
                       <div class="flex gap-2">
                         <a
                           :href="getFullUrl(song.pdf)"
@@ -105,6 +101,13 @@
               </template>
             </tbody>
           </table>
+          <div class="col-span-12 mt-4">
+            <Pagination
+              :currentPage="currentPage"
+              :totalPages="totalPages"
+              @page-changed="fetchData"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -115,7 +118,7 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import Header from "@/components/header/index/Main.vue";
-/* import Pagination from "@/components/pagination/Main.vue"; */
+import Pagination from "@/components/pagination/Main.vue";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
 
 // Environment configuration
