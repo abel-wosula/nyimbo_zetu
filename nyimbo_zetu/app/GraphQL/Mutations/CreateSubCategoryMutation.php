@@ -10,14 +10,14 @@ class CreateSubCategoryMutation
     public function createSubCategory($_, array $args)
     {
         // Validate and create the subcategory
-        $subCategory = SubCategory::create([
+        $subcategory = SubCategory::create([
             'name' => $args['name'],
             'category_id' => $args['category_id']
             
         ]);
 
         return [
-            'subCategory' => $subCategory,
+            'subcategory' => $subcategory,
             'message' => 'Subcategory created successfully',
         ];
     }   
