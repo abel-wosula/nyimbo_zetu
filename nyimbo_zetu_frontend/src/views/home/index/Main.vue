@@ -1,6 +1,6 @@
 <template>
   <Header activeLink="home" />
-  <div class="max-w-1/2 bg-white p-4 mx-auto min-h-screen">
+  <div class="bg-white p-4 mx-auto min-h-screen">
     <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
       <h2
         class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
@@ -60,7 +60,7 @@
                   <td class="px-2 py-4 font-medium">{{ song.composer }}</td>
                   <td class="px-2 py-4">
                     <div class="flex items-center gap-2">
-                      <audio controls class="w-48 audio-player">
+                      <audio controls class="w-48 p-2 audio-player">
                         <source :src="getFullUrl(song.midi)" />
                         Your browser does not support the audio element.
                       </audio>
