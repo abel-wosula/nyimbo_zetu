@@ -19,8 +19,9 @@
         </a>
 
         <!-- Action Buttons -->
-        <div class="flex items-center lg:order-2">
-          <a
+        <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
+          <div>
+            <!--  <a
             href="/login"
             class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
           >
@@ -37,7 +38,39 @@
             class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg hidden lg:block text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
           >
             Profile
-          </a>
+          </a> -->
+
+            <button
+              @click="handleSongUpload"
+              class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+              </svg>
+              Upload Song
+            </button>
+          </div>
+
+          <!-- profile section -->
+          <div class=" items-center gap-5 dark:text-white  hidden lg:block">
+            <template v-if="!loggedIn"> </template>
+            <template v-else>
+             <div class="flex items-center gap-2">
+              <a
+                href="/profile"
+                class=" w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
+              >
+                <img
+                  src="../../../assets/android-chrome-192x192.png"
+                  alt="Profile"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+              <span>Hello, User</span>
+             </div>
+            </template>
+            
+          </div>
 
           <!-- Toggle Button -->
           <button
@@ -101,20 +134,8 @@
                 >Trending Songs</a
               >
             </li>
-            <li>
-              <a
-                href="team"
-                class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Team</a
-              >
-            </li>
-            <li>
-              <a
-                href="contact"
-                class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Contact</a
-              >
-            </li>
+
+           
           </ul>
         </div>
       </div>
@@ -145,22 +166,25 @@
             />
           </svg>
         </button>
-        <button class="text-gray-300 justify-items-center">
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
+
+        <!-- Profile section on mobile view -->
+
+        <template v-if="loggedIn" >
+         <div class="flex items-center gap-2 dark:text-white">
+          <a
+            href="/profile"
+            class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M5.121 17.804A9 9 0 0112 15a9 9 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+            <img
+              src="../../../assets/android-chrome-192x192.png"
+              alt="Profile"
+              class="w-full h-full object-cover"
             />
-          </svg>
-          <span>Profile</span>
-        </button>
+           
+          </a>
+          <span>Hello, User</span>
+         </div>
+        </template>
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
@@ -168,7 +192,6 @@
           <li><a href="#" @click="closeMenu">Songs</a></li>
           <li><a href="#" @click="closeMenu">Seasons</a></li>
           <li><a href="#" @click="closeMenu">Trending Songs</a></li>
-          <li><a href="#" @click="closeMenu">Team</a></li>
           <li><a href="#" @click="closeMenu">Contact</a></li>
         </ul>
       </div>
@@ -185,9 +208,12 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const isOpen = ref(false);
 const mobileMenu = ref(null);
+const loggedIn = ref(false);
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
@@ -209,5 +235,19 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener("mousedown", handleClickOutside);
+});
+
+/* Redirect user to enable them access the upload page */
+const handleSongUpload = () => {
+  const isLoggedIn = !localStorage.getItem("auth_token");
+  if (isLoggedIn) {
+    router.push("/upload");
+  } else {
+    router.push("/login");
+  }
+};
+
+onMounted(() => {
+  loggedIn.value = !localStorage.getItem("auth_token");
 });
 </script>
