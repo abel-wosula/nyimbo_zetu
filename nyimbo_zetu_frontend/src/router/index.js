@@ -1,9 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import register from "../views/register/index/Main.vue";
 import login from "../views/login/index/Main.vue";
-import Header from "../components/header/index/Main.vue";
-import Home from '../views/home/index/Main.vue'
-
+import Home from "../views/home/index/Main.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,8 +9,8 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "header",
-      component: Header,
+      name: "home",
+      component: Home,
     },
     {
       path: "/register",
@@ -24,11 +22,6 @@ const router = createRouter({
       name: "login",
       component: login,
     },
-    {
-      path: '/home',
-      name: 'home',
-      component: Home,
-    }
   ],
 });
 export default router;
