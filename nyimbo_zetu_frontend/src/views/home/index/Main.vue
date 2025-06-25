@@ -3,7 +3,7 @@
   <div class="bg-white p-4 mx-auto min-h-screen">
     <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
       <h2
-        class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        class="mb-5 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
       >
         Our Music
       </h2>
@@ -12,7 +12,7 @@
       </p>
     </div>
     <div class="grid grid-cols-12 items-center gap-2">
-      <div class="filters col-span-1 p-1 flex flex-row">
+      <div class="filters col-span-12 p-1 flex flex-row">
         <div class="flex items-start justify-between w-full">
           <div class="form-group flex flex-row items-center">
             <label for="search" class="mr-2">Search</label>
@@ -25,14 +25,15 @@
           </div>
         </div>
       </div>
-      <div class=" ">
-        <div class="">
-          <table class="text-sm bg-blue-200 rounded-lg">
+      <div class="col-span-12 p-4 overflow-x-auto">
+        <div class="w-full">
+          <table class="w-full text-sm bg-blue-200 rounded-lg">
             <thead class="border-b border-gray-600 font-semibold bg-slate-300">
               <tr>
                 <th class="p-3 text-left">Song Title</th>
-                <th class="p-3 text-left">Lyrics</th>
                 <th class="p-3 text-left">Composer</th>
+                <th class="p-3 text-left">Artist/Choir</th>
+                <th class="p-3 text-left">Lyrics</th>
                 <th class="p-3 text-left">Midi</th>
                 <th class="p-3 text-left">Score Sheet</th>
                 <th class="p-3 text-left">Youtube Link</th>
@@ -56,8 +57,9 @@
                   class="border-b border-opacity-20 hover:bg-blue-100 transition-colors"
                 >
                   <td class="px-2 py-4 font-medium">{{ song.title }}</td>
-                  <td class="px-2 py-4 font-medium">{{ song.lyrics }}</td>
                   <td class="px-2 py-4 font-medium">{{ song.composer }}</td>
+                  <td class="px-2 py-4 font-medium">{{ song.artists }}</td>
+                  <td class="px-2 py-4 font-medium">{{ song.lyrics }}</td>
                   <td class="px-2 py-4">
                     <div class="flex items-center gap-2">
                       <audio controls class="w-48 p-2 audio-player">
