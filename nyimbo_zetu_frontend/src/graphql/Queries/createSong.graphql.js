@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const CREATE_SONG = gql`
-  query createSong {
-    songs(first: 10, page: 1) {
+  query createSong($search: String, $page: Int, $first: Int) {
+    songs(first: $first, page: $page, songsSearch: { search: $search }) {
       data {
         artists
         title
@@ -13,7 +13,6 @@ export const CREATE_SONG = gql`
         ytlink
         subcategory_id
         user_id
-
       }
       paginatorInfo {
         total

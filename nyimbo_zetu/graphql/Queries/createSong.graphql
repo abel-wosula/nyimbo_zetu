@@ -1,4 +1,6 @@
 extend type Query {
-    songs: [Song!]! @paginate(defaultCount: 10)
+    songs(
+        songsSearch: SongsSearchParams
+            @builder(method: "App\\GraphQL\\Queries\\SongsQuery@fetchSongs")
+    ): [Song!]! @paginate(defaultCount: 10)
 }
-
