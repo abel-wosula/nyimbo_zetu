@@ -23,10 +23,24 @@ input CreateSongInput {
     ytlink: String!
     subcategory_id: ID!
     user_id: ID!
-  
 }
 
 type CreateSongMutationResponse {
     message: String!
     upload: Song
+}
+
+input SongsSearchInput {
+    artists: String
+    title: String
+    lyrics: String
+    composer: String
+}
+
+input SongsSearchParams {
+    limit: Int
+    offset: Int
+    search: String
+    sort: String
+    order: String
 }

@@ -7,20 +7,22 @@
       >
         Our Music
       </h2>
-      <p class="font-light text-gray-700 lg:mb-4 sm:text-xl dark:text-gray-400">
+      <p class="font-dark text-gray-700 lg:mb-4 sm:text-xl dark:text-gray-400">
         Download your audio and music sheets from this page.
       </p>
     </div>
-    <div class="grid grid-cols-12 items-center gap-2">
+    <div class="grid grid-cols-12 items-center gap-1">
       <div class="filters col-span-12 p-1 flex flex-row">
         <div class="flex items-start justify-between w-full">
-          <div class="form-group flex flex-row items-center">
-            <label for="search" class="mr-2">Search</label>
+          <div class="form-group flex flex-row items-center w-full max-w-xl">
+            <label for="search" class="mr-2 whitespace-nowrap">Search</label>
             <input
               type="text"
               id="search"
-              class="w-full p-1 border border-gray-400 rounded-lg"
-              placeholder="Search music..."
+              class="p-2 w-full text-sm border border-gray-800 rounded-lg"
+              placeholder="Search by artist name, lyrics, composer name or song title..."
+              v-model="filters.search"
+              @input="debouncedFetchData"
             />
           </div>
         </div>
@@ -124,6 +126,7 @@ import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
 import Pagination from "@/components/pagination/Main.vue";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
+import { debounce } from "lodash";
 
 // Environment configuration
 const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
@@ -164,11 +167,6 @@ const debouncedFetchData = debounce(() => {
   refetch({ search: filters.search });
 }, 300);
 
-// Helper functions
-const getFileName = (path) => {
-  return path?.split("/").pop() || "pdf";
-};
-
 const getFullUrl = (path) => {
   if (!path) return "";
   return path.startsWith("http") ? path : `${baseUrl}${path}`;
@@ -178,15 +176,6 @@ const showPdfPreview = (path) => {
   const fullUrl = getFullUrl(path);
   if (fullUrl) window.open(fullUrl, "_blank");
 };
-
-// Debounce utility
-function debounce(fn, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
 
 // Handle query results
 onResult((result) => {
