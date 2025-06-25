@@ -4,6 +4,7 @@ export const CREATE_SONG = gql`
   query createSong {
     songs(first: 10, page: 1) {
       data {
+        artists
         title
         lyrics
         composer
