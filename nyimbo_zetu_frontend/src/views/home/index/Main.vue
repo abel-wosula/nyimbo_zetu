@@ -3,7 +3,7 @@
   <div class="bg-white p-4 mx-auto min-h-screen">
     <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
       <h2
-        class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        class="mb-5 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
       >
         Our Music
       </h2>
