@@ -5,7 +5,7 @@
         class="flex flex-wrap justify-between items-center mx-auto min-w-xs max-w-screen-xl"
       >
         <!-- Logo -->
-        <a href="/home" class="flex items-center">
+        <a href="/" class="flex items-center">
           <img
             src="../../../assets/android-chrome-512x512.png"
             class="mr-3 h-6 rounded-full sm:h-9"
@@ -75,7 +75,7 @@
           >
             <li>
               <a
-                href="/home"
+                href="/"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
                 >Home</a
               >
@@ -164,7 +164,7 @@
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
-          <li><a href="/home" @click="closeMenu">Home</a></li>
+          <li><a href="/" @click="closeMenu">Home</a></li>
           <li><a href="#" @click="closeMenu">Songs</a></li>
           <li><a href="#" @click="closeMenu">Seasons</a></li>
           <li><a href="#" @click="closeMenu">Trending Songs</a></li>

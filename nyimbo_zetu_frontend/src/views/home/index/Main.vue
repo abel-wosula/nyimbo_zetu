@@ -114,12 +114,14 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import Header from "@/components/header/index/Main.vue";
+import Footer from "@/components/footer/index/Main.vue";
 import Pagination from "@/components/pagination/Main.vue";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
 

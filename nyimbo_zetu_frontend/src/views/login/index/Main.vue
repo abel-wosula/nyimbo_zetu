@@ -101,6 +101,7 @@
       </div>
     </div>
   </section>
+  <Footer />
 </template>
 
 <script setup>
@@ -109,6 +110,7 @@ import { useRouter } from "vue-router";
 import { useMutation } from "@vue/apollo-composable";
 import { LOGIN_USER } from "@/graphql/Mutations/userLogin.js";
 import Header from "@/components/header/index/Main.vue";
+import Footer from "@/components/footer/index/Main.vue";
 
 const router = useRouter();
 
