@@ -1,5 +1,6 @@
 type Song {
     id: ID!
+    artists: String!
     title: String!
     lyrics: String!
     composer: String!
@@ -13,6 +14,7 @@ type Song {
 }
 
 input CreateSongInput {
+    artists: String!
     title: String!
     lyrics: String!
     composer: String!

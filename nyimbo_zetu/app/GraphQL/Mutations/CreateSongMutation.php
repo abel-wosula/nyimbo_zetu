@@ -21,7 +21,7 @@ class CreateSongMutation
                 'upload' => null,
             ];
         }
-
+        $artists = $args['artists'];
         $pdf = $args['pdf'];
         $midi = $args['midi'];
         $title = $args['title'];
@@ -62,6 +62,7 @@ class CreateSongMutation
 
         // Save to DB
         $upload = Song::create([
+            'artists'=>$artists,
             'title' => $title,
             'composer' => $composer,
             'ytlink' => $ytlink,

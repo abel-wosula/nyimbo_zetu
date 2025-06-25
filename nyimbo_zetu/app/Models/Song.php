@@ -18,6 +18,7 @@ class  Song extends BaseModel
     protected $table = 'songs';
 
     protected $fillable = [
+        'artists',
         'title',
         'lyrics',
         'composer',
