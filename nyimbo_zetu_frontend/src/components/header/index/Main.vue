@@ -21,25 +21,6 @@
         <!-- Action Buttons -->
         <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
           <div>
-            <!--  <a
-            href="/login"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Log in
-          </a>
-          <a
-            href="/register"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Sign Up
-          </a>
-          <a
-            href="/profile"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg hidden lg:block text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Profile
-          </a> -->
-
             <button
               @click="handleSongUpload"
               class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
@@ -52,30 +33,52 @@
           </div>
 
           <!-- profile section -->
-          <div class=" items-center gap-5 dark:text-white  hidden lg:block">
+          <div
+            class="items-center gap-5 dark:text-white hidden lg:block relative"
+          >
             <template v-if="!loggedIn"> </template>
             <template v-else>
-             <div class="flex items-center gap-2">
-              <a
-                href="/profile"
-                class=" w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
-              >
-                <img
-                  src="../../../assets/android-chrome-192x192.png"
-                  alt="Profile"
-                  class="w-full h-full object-cover"
-                />
-              </a>
-              <span>Hello, User</span>
-             </div>
-            </template>
-            
-          </div>
+              <div class="flex items-center gap-2 relative">
+                <!-- Profile image button -->
+                <button
+                  @click="toggleDropdown"
+                  class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500 cursor-pointer"
+                >
+                  <img
+                    src="../../../assets/android-chrome-192x192.png"
+                    alt="Profile"
+                    class="w-full h-full object-cover"
+                  />
+                </button>
+                <span>Hello, User</span>
 
+                <!-- Dropdown Menu -->
+                <div
+                  v-show="dropdownOpen"
+                  @click.away="dropdownOpen = false"
+                  class="absolute top-12 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg py-2 z-50 w-40"
+                >
+                  <a
+                    href="/profile"
+                    class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    View Profile
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="logout"
+                    class="block px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Logout
+                  </a>
+                </div>
+              </div>
+            </template>
+          </div>
           <!-- Toggle Button -->
           <button
             @click="toggleMenu"
-            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 cursor-pointer"
           >
             <svg
               v-if="!isOpen"
@@ -134,8 +137,6 @@
                 >Trending Songs</a
               >
             </li>
-
-           
           </ul>
         </div>
       </div>
@@ -149,7 +150,7 @@
       >
         <!-- X Button -->
         <button
-          class="text-gray-600 dark:text-gray-300 hover:text-red-500 absolute top-5 right-6"
+          class="text-gray-600 dark:text-gray-300 hover:text-red-500 absolute top-5 right-6 cursor-pointer"
           @click="toggleMenu"
         >
           <svg
@@ -169,22 +170,46 @@
 
         <!-- Profile section on mobile view -->
 
-        <template v-if="loggedIn" >
-         <div class="flex items-center gap-2 dark:text-white">
-          <a
-            href="/profile"
-            class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
-          >
-            <img
-              src="../../../assets/android-chrome-192x192.png"
-              alt="Profile"
-              class="w-full h-full object-cover"
-            />
-           
-          </a>
-          <span>Hello, User</span>
-         </div>
-        </template>
+        <span class="flex gap-2 dark:text-white">
+          <template v-if="!loggedIn"> </template>
+          <template v-else>
+            <div class="flex items-center gap-2 relative">
+              <!-- Profile image button -->
+              <button
+                @click="toggleDropdown"
+                class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500 cursor-pointer"
+              >
+                <img
+                  src="../../../assets/android-chrome-192x192.png"
+                  alt="Profile"
+                  class="w-full h-full object-cover"
+                />
+              </button>
+              <span>Hello, User</span>
+
+              <!-- Dropdown Menu -->
+              <div
+                v-show="dropdownOpen"
+                @click.away="dropdownOpen = false"
+                class="absolute top-12 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg py-2 z-50 w-40"
+              >
+                <a
+                  href="/profile"
+                  class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  View Profile
+                </a>
+                <a
+                  href="#"
+                  @click.prevent="logout"
+                  class="block px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Logout
+                </a>
+              </div>
+            </div>
+          </template>
+        </span>
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
@@ -214,6 +239,7 @@ const router = useRouter();
 const isOpen = ref(false);
 const mobileMenu = ref(null);
 const loggedIn = ref(false);
+const dropdownOpen = ref(false);
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
@@ -228,6 +254,12 @@ const handleClickOutside = (event) => {
     closeMenu();
   }
 };
+
+//user profile toggle nav
+
+function toggleDropdown() {
+  dropdownOpen.value = !dropdownOpen.value;
+}
 
 onMounted(() => {
   document.addEventListener("mousedown", handleClickOutside);
@@ -250,4 +282,6 @@ const handleSongUpload = () => {
 onMounted(() => {
   loggedIn.value = !localStorage.getItem("auth_token");
 });
+
+//logout functionality
 </script>
