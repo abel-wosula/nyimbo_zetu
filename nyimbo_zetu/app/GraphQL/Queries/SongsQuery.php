@@ -8,17 +8,19 @@ class SongsQuery
 {
     public function fetchSongs($_, $args)
     {
-        $songs = Song::query()
-            ->orderBy('title', 'DESC');
-        $search = $args['search'];
+        $songs = Song::query()->orderBy('id', 'ASC');
 
-        if (isset($search) && $search !== '') {
-            $songs->where('title', 'LIKE', "%{$search}%")
-                ->orWhere('artists', 'LIKE', "%{$search}%")
-                ->orWhere('composer', 'LIKE', "%$search%")
-                ->orWhere('lyrics', 'LIKE', "%$search%");
+        $search = $args['search'] ?? '';
+
+        if ($search !== '') {
+            $songs->where(function ($query) use ($search) {
+                $query->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('artists', 'LIKE', "%{$search}%")
+                    ->orWhere('composer', 'LIKE', "%{$search}%")
+                    ->orWhere('lyrics', 'LIKE', "%{$search}%");
+            });
         }
 
-        return $songs;
+        return $songs; //DO NOT paginate here
     }
 }

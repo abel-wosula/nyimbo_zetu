@@ -1,11 +1,11 @@
 <template>
   <div class="pagination">
-    <button :disabled="currentPage === 1" @click="changePage(currentPage - 1)">
+    <button :disabled="currentPage <= 1" @click="changePage(currentPage - 1)">
       Previous
     </button>
 
     <button
-      v-for="page in totalPages"
+      v-for="page in pages"
       :key="page"
       :class="{ active: page === currentPage }"
       @click="changePage(page)"
@@ -14,7 +14,7 @@
     </button>
 
     <button
-      :disabled="currentPage === totalPages"
+      :disabled="currentPage >= totalPages"
       @click="changePage(currentPage + 1)"
     >
       Next
@@ -34,9 +34,16 @@ export default {
       required: true,
     },
   },
+  computed: {
+    pages() {
+      return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    },
+  },
   methods: {
     changePage(page) {
-      this.$emit("page-changed", page);
+      if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+        this.$emit("page-changed", page);
+      }
     },
   },
 };
@@ -51,6 +58,8 @@ export default {
 button {
   margin: 0 5px;
   padding: 5px 10px;
+  border: 1px solid #ccc;
+  background: white;
 }
 button.active {
   font-weight: bold;

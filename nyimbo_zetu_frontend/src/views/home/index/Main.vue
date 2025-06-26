@@ -58,10 +58,10 @@
                   :key="index"
                   class="border-b border-opacity-20 hover:bg-blue-100 transition-colors"
                 >
-                  <td class="px-2 py-4 font-medium">{{ song.title }}</td>
-                  <td class="px-2 py-4 font-medium">{{ song.composer }}</td>
-                  <td class="px-2 py-4 font-medium">{{ song.artists }}</td>
-                  <td class="px-2 py-4 font-medium">{{ song.lyrics }}</td>
+                  <td class="px-2 py-4">{{ song.title }}</td>
+                  <td class="px-2 py-4">{{ song.composer }}</td>
+                  <td class="px-2 py-4">{{ song.artists }}</td>
+                  <td class="px-2 py-4">{{ song.lyrics }}</td>
                   <td class="px-2 py-4">
                     <div class="flex items-center gap-2">
                       <audio controls class="w-48 p-2 audio-player">
@@ -105,22 +105,22 @@
               </template>
             </tbody>
           </table>
-          <div class="col-span-12 mt-4">
-            <Pagination
-              :currentPage="currentPage"
-              :totalPages="totalPages"
-              @page-changed="fetchData"
-            />
-          </div>
         </div>
       </div>
     </div>
+  </div>
+  <div class="col-span-12 mt-4">
+    <Pagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @page-changed="fetchData"
+    />
   </div>
   <Footer />
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from "vue";
+import { ref, reactive, watch, watchEffect, onMounted } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
@@ -151,20 +151,29 @@ const {
 } = useQuery(
   CREATE_SONG,
   () => ({
+    songsSearch: { search: filters.search },
     page: currentPage.value,
     first: filters.first,
-    search: filters.search,
   }),
   { fetchPolicy: "network-only" }
 );
 
-// Watchers
-watch(currentPage, (newPage) => {
-  refetch({ page: newPage, first: filters.first });
-});
+const fetchData = (page = 1) => {
+  currentPage.value = page;
+  refetch({
+    songsSearch: { search: filters.search },
+    page: page,
+    first: filters.first,
+  });
+};
 
 const debouncedFetchData = debounce(() => {
-  refetch({ search: filters.search });
+  currentPage.value = 1;
+  refetch({
+    songsSearch: { search: filters.search },
+    page: 1,
+    first: filters.first,
+  });
 }, 300);
 
 const getFullUrl = (path) => {
@@ -179,6 +188,8 @@ const showPdfPreview = (path) => {
 
 // Handle query results
 onResult((result) => {
+  console.log("Paginator Info:", result.data?.songs?.paginatorInfo);
+
   if (result.data?.songs?.data) {
     songs.value = result.data.songs.data;
     totalPages.value = result.data.songs.paginatorInfo.lastPage || 1;
@@ -192,6 +203,19 @@ onError((error) => {
   console.error("GraphQL Error:", error);
   songs.value = [];
 });
+watch(currentPage, (newPage) => {
+  refetch({
+    search: filters.search,
+    page: newPage,
+    first: filters.first,
+  });
+});
+watch(
+  () => filters.search,
+  () => {
+    currentPage.value = 1;
+  }
+);
 </script>
 
 <style scoped>

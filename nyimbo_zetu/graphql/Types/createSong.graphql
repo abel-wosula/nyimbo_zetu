@@ -38,9 +38,16 @@ input SongsSearchInput {
 }
 
 input SongsSearchParams {
-    limit: Int
-    offset: Int
     search: String
-    sort: String
-    order: String
+}
+
+type PaginatorInfo {
+    count: Int!
+    currentPage: Int!
+    firstItem: Int
+    hasMorePages: Boolean!
+    lastItem: Int
+    lastPage: Int!
+    perPage: Int!
+    total: Int!
 }
