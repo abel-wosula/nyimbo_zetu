@@ -1,9 +1,9 @@
-import gql from "graphql-tag";
-
+import { gql } from "@apollo/client";
 export const CREATE_SONG = gql`
-  query createSong($search: String, $page: Int, $first: Int) {
-    songs(first: $first, page: $page, songsSearch: { search: $search }) {
+  query createSong($songsSearch: SongsSearchParams, $page: Int, $first: Int) {
+    songs(songsSearch: $songsSearch, page: $page, first: $first) {
       data {
+        id
         artists
         title
         lyrics
@@ -18,6 +18,7 @@ export const CREATE_SONG = gql`
         total
         currentPage
         hasMorePages
+        lastPage
       }
     }
   }
