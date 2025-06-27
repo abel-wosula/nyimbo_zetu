@@ -21,27 +21,8 @@
         <!-- Action Buttons -->
         <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
           <div>
-            <!--  <a
-            href="/login"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Log in
-          </a>
-          <a
-            href="/register"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Sign Up
-          </a>
-          <a
-            href="/profile"
-            class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg hidden lg:block text-xs sm:text-lg px-2 lg:px-5 py-2 lg:py-2.5 mr-1 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-          >
-            Profile
-          </a> -->
-
             <button
-              @click="handleSongUpload"
+              @click="handleUserLogin"
               class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
             >
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -51,27 +32,25 @@
             </button>
           </div>
 
-          <!-- profile section -->
-          <div class=" items-center gap-5 dark:text-white  hidden lg:block">
-            <template v-if="!loggedIn"> </template>
-            <template v-else>
-             <div class="flex items-center gap-2">
+          <!-- profile section ONLY VISIBLE WHEN LOGGED IN -->
+          <div
+            v-if="loggedIn"
+            class="items-center gap-5 dark:text-white hidden lg:flex"
+          >
+            <div class="flex items-center gap-2">
               <a
                 href="/profile"
-                class=" w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
+                class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
               >
                 <img
-                  src="../../../assets/android-chrome-192x192.png"
+                  :src="userProfileImage"
                   alt="Profile"
                   class="w-full h-full object-cover"
                 />
               </a>
-              <span>Hello, User</span>
-             </div>
-            </template>
-            
+              <span>Hello, {{ user.last_name }}</span>
+            </div>
           </div>
-
           <!-- Toggle Button -->
           <button
             @click="toggleMenu"
@@ -134,8 +113,6 @@
                 >Trending Songs</a
               >
             </li>
-
-           
           </ul>
         </div>
       </div>
@@ -169,21 +146,16 @@
 
         <!-- Profile section on mobile view -->
 
-        <template v-if="loggedIn" >
-         <div class="flex items-center gap-2 dark:text-white">
-          <a
-            href="/profile"
-            class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
-          >
-            <img
-              src="../../../assets/android-chrome-192x192.png"
-              alt="Profile"
-              class="w-full h-full object-cover"
-            />
-           
-          </a>
-          <span>Hello, User</span>
-         </div>
+        <template v-if="loggedIn">
+          <div class="flex items-center gap-2 dark:text-white mb-6">
+            <a
+              href="/profile"
+              class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
+            >
+              <img :src="userProfileImage" class="w-full h-full object-cover" />
+            </a>
+            <span>Hello, {{ user.last_name }}</span>
+          </div>
         </template>
 
         <!-- Links -->
@@ -214,7 +186,35 @@ const router = useRouter();
 const isOpen = ref(false);
 const mobileMenu = ref(null);
 const loggedIn = ref(false);
+const userProfileImage = ref("");
+const user = ref("");
 
+const initializeAuthState = () => {
+  const token = localStorage.getItem("token");
+  const userData = localStorage.getItem("user");
+
+  loggedIn.value = token !== null;
+
+  if (loggedIn.value && userData) {
+    try {
+      const user = JSON.parse(userData);
+      user.value = user.name || "User";
+      userProfileImage.value =
+        user.profileImage || "../../../assets/android-chrome-192x192.png";
+    } catch (e) {
+      console.error("Error parsing user data:", e);
+    }
+  }
+};
+
+// Redirect for upload
+const handleUserLogin = () => {
+  if (loggedIn.value) {
+    router.push("/upload");
+  } else {
+    router.push("/login");
+  }
+};
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 };
@@ -230,24 +230,27 @@ const handleClickOutside = (event) => {
 };
 
 onMounted(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener("mousedown", handleClickOutside);
-});
-
-/* Redirect user to enable them access the upload page */
-const handleSongUpload = () => {
-  const isLoggedIn = !localStorage.getItem("auth_token");
-  if (isLoggedIn) {
-    router.push("/upload");
-  } else {
-    router.push("/login");
+  const storedUser = localStorage.getItem("user_data");
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser);
+    } catch (e) {
+      console.error("Invalid user data", e);
+    }
   }
-};
+});
 
 onMounted(() => {
-  loggedIn.value = !localStorage.getItem("auth_token");
+  initializeAuthState();
+
+  // Optional: Watch for storage changes if needed
+  window.addEventListener("storage", initializeAuthState);
+  onMounted(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  });
 });
 </script>
