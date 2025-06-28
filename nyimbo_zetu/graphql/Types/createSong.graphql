@@ -38,9 +38,14 @@ input SongsSearchInput {
 }
 
 input SongsSearchParams {
+    limit: Int
+    offset: Int
     search: String
+    sort: String
+    order: String
+    page: Int
+    user_id: ID
 }
-
 type PaginatorInfo {
     count: Int!
     currentPage: Int!

@@ -9,6 +9,7 @@ type User {
     password: String!
     created_at: String!
     updated_at: String!
+    image: String!
 }
 
 input CreateUserInput {
@@ -18,6 +19,7 @@ input CreateUserInput {
     phone_number: String!
     address: String!
     password: String!
+    image: Upload
 }
 
 type CreateUserMutationResponse {
@@ -27,5 +29,5 @@ type CreateUserMutationResponse {
 
 type AuthPayload {
     token: String!
-    user: User
+    user: User!
 }

@@ -1,7 +1,17 @@
 import { gql } from "@apollo/client";
 export const CREATE_SONG = gql`
-  query createSong($songsSearch: SongsSearchParams, $page: Int, $first: Int) {
-    songs(songsSearch: $songsSearch, page: $page, first: $first) {
+  query createSong(
+    $songsSearch: SongsSearchParams
+    $page: Int
+    $first: Int
+    $user_id: ID
+  ) {
+    songs(
+      songsSearch: $songsSearch
+      page: $page
+      first: $first
+      user_id: $user_id
+    ) {
       data {
         id
         artists

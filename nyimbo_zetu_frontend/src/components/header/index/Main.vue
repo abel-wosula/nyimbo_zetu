@@ -22,7 +22,7 @@
         <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
           <div>
             <button
-              @click="handleSongUpload"
+              @click="handleUserLogin"
               class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
             >
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -32,48 +32,24 @@
             </button>
           </div>
 
-          <!-- profile section -->
+          <!-- profile section ONLY VISIBLE WHEN LOGGED IN -->
           <div
-            class="items-center gap-5 dark:text-white hidden lg:block relative"
+            v-if="loggedIn"
+            class="items-center gap-5 dark:text-white hidden lg:flex"
           >
-            <template v-if="!loggedIn"> </template>
-            <template v-else>
-              <div class="flex items-center gap-2 relative">
-                <!-- Profile image button -->
-                <button
-                  @click="toggleDropdown"
-                  class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500 cursor-pointer"
-                >
-                  <img
-                    src="../../../assets/android-chrome-192x192.png"
-                    alt="Profile"
-                    class="w-full h-full object-cover"
-                  />
-                </button>
-                <span>Hello, User</span>
-
-                <!-- Dropdown Menu -->
-                <div
-                  v-show="dropdownOpen"
-                  @click.away="dropdownOpen = false"
-                  class="absolute top-12 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg py-2 z-50 w-40"
-                >
-                  <a
-                    href="/profile"
-                    class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    View Profile
-                  </a>
-                  <a
-                    href="#"
-                    @click.prevent="logout"
-                    class="block px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    Logout
-                  </a>
-                </div>
-              </div>
-            </template>
+            <div class="flex items-center gap-2">
+              <a
+                href="/profile"
+                class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
+              >
+                <img
+                  :src="userProfileImage"
+                  alt="Profile"
+                  class="w-full h-full object-cover"
+                />
+              </a>
+              <span>Hello, {{ user.last_name }}</span>
+            </div>
           </div>
           <!-- Toggle Button -->
           <button
@@ -170,46 +146,17 @@
 
         <!-- Profile section on mobile view -->
 
-        <span class="flex gap-2 dark:text-white">
-          <template v-if="!loggedIn"> </template>
-          <template v-else>
-            <div class="flex items-center gap-2 relative">
-              <!-- Profile image button -->
-              <button
-                @click="toggleDropdown"
-                class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500 cursor-pointer"
-              >
-                <img
-                  src="../../../assets/android-chrome-192x192.png"
-                  alt="Profile"
-                  class="w-full h-full object-cover"
-                />
-              </button>
-              <span>Hello, User</span>
-
-              <!-- Dropdown Menu -->
-              <div
-                v-show="dropdownOpen"
-                @click.away="dropdownOpen = false"
-                class="absolute top-12 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg py-2 z-50 w-40"
-              >
-                <a
-                  href="/profile"
-                  class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  View Profile
-                </a>
-                <a
-                  href="#"
-                  @click.prevent="logout"
-                  class="block px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  Logout
-                </a>
-              </div>
-            </div>
-          </template>
-        </span>
+        <template v-if="loggedIn">
+          <div class="flex items-center gap-2 dark:text-white mb-6">
+            <a
+              href="/profile"
+              class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
+            >
+              <img :src="userProfileImage" class="w-full h-full object-cover" />
+            </a>
+            <span>Hello, {{ user.last_name }}</span>
+          </div>
+        </template>
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
@@ -239,8 +186,35 @@ const router = useRouter();
 const isOpen = ref(false);
 const mobileMenu = ref(null);
 const loggedIn = ref(false);
-const dropdownOpen = ref(false);
+const userProfileImage = ref("");
+const user = ref("");
 
+const initializeAuthState = () => {
+  const token = localStorage.getItem("token");
+  const userData = localStorage.getItem("user");
+
+  loggedIn.value = token !== null;
+
+  if (loggedIn.value && userData) {
+    try {
+      const user = JSON.parse(userData);
+      user.value = user.name || "User";
+      userProfileImage.value =
+        user.profileImage || "../../../assets/android-chrome-192x192.png";
+    } catch (e) {
+      console.error("Error parsing user data:", e);
+    }
+  }
+};
+
+// Redirect for upload
+const handleUserLogin = () => {
+  if (loggedIn.value) {
+    router.push("/upload");
+  } else {
+    router.push("/login");
+  }
+};
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 };
@@ -255,33 +229,28 @@ const handleClickOutside = (event) => {
   }
 };
 
-//user profile toggle nav
-
-function toggleDropdown() {
-  dropdownOpen.value = !dropdownOpen.value;
-}
-
 onMounted(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener("mousedown", handleClickOutside);
-});
-
-/* Redirect user to enable them access the upload page */
-const handleSongUpload = () => {
-  const isLoggedIn = !localStorage.getItem("auth_token");
-  if (isLoggedIn) {
-    router.push("/upload");
-  } else {
-    router.push("/login");
+  const storedUser = localStorage.getItem("user_data");
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser);
+    } catch (e) {
+      console.error("Invalid user data", e);
+    }
   }
-};
-
-onMounted(() => {
-  loggedIn.value = !localStorage.getItem("auth_token");
 });
 
-//logout functionality
+onMounted(() => {
+  initializeAuthState();
+
+  // Optional: Watch for storage changes if needed
+  window.addEventListener("storage", initializeAuthState);
+  onMounted(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  });
+});
 </script>

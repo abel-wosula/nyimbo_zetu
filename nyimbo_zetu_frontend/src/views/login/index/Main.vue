@@ -120,7 +120,6 @@ const form = ref({
 });
 const loading = ref(false);
 const { mutate: userLogin, onDone, onError } = useMutation(LOGIN_USER);
-
 const handleLogin = async () => {
   try {
     if (!form.value.email || !form.value.password) {
@@ -128,36 +127,44 @@ const handleLogin = async () => {
       return;
     }
 
-    const variables = {
-      email: form.value.email,
-      password: form.value.password,
-    };
-
-    console.log("Sending variables:", variables);
-
     const { data } = await userLogin({
       email: form.value.email,
       password: form.value.password,
     });
+
     console.log("Login response:", data);
 
-    if (!data || !data.userLogin || !data.userLogin.token) {
-      alert("Invalid credentials or empty token");
+    const token = data?.userLogin?.token;
+    const user = data?.userLogin?.user;
+
+    if (!token || !user) {
+      alert("Invalid credentials or missing token/user");
       return;
     }
 
-    localStorage.setItem("token", data.userLogin.token);
-    router.push("/");
+    // ✅ Save both token and user
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(data.userLogin.user));
+
+    // ✅ Redirect to profile
+    alert("Login successful!");
+    router.push("/profile");
   } catch (error) {
     console.error("Login error:", error);
     alert("Login failed: " + error.message);
   }
 };
+
 onDone(({ data }) => {
-  localStorage.setItem("Token", data.userLogin.token);
-  router.push("/");
+  localStorage.setItem("auth_token", data.userLogin.token);
+  localStorage.setItem("user_data", JSON.stringify(data.userLogin.user));
+  window.dispatchEvent(new Event("storage")); // to trigger update
+  router.push("/profile");
 });
 onError((error) => {
   console.error("Login failed:", error.message);
+  // store user id
+  localStorage.setItem("token", data.userLogin.token);
+  localStorage.setItem("user", JSON.stringify(data.userLogin.user)); // store user
 });
 </script>
