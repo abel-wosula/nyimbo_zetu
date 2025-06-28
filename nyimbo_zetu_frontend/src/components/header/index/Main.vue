@@ -54,7 +54,7 @@
           <!-- Toggle Button -->
           <button
             @click="toggleMenu"
-            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 cursor-pointer"
           >
             <svg
               v-if="!isOpen"
@@ -126,7 +126,7 @@
       >
         <!-- X Button -->
         <button
-          class="text-gray-600 dark:text-gray-300 hover:text-red-500 absolute top-5 right-6"
+          class="text-gray-600 dark:text-gray-300 hover:text-red-500 absolute top-5 right-6 cursor-pointer"
           @click="toggleMenu"
         >
           <svg
