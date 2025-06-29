@@ -1,6 +1,8 @@
 <template>
   <header class="sticky top-0 z-[8888]">
-    <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+    <nav
+      class="bg-gray-300 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800"
+    >
       <div
         class="flex flex-wrap justify-between items-center mx-auto min-w-xs max-w-screen-xl"
       >
@@ -49,6 +51,12 @@
                 />
               </a>
               <span>Hello, {{ user.last_name }}</span>
+              <button
+                @click="logout"
+                class="text-xs text-red-600 hover:text-red-800 underline ml-2"
+              >
+                Logout
+              </button>
             </div>
           </div>
           <!-- Toggle Button -->
@@ -155,6 +163,12 @@
               <img :src="userProfileImage" class="w-full h-full object-cover" />
             </a>
             <span>Hello, {{ user.last_name }}</span>
+            <button
+              @click="logout"
+              class="text-sm text-red-500 hover:underline ml-2"
+            >
+              Logout
+            </button>
           </div>
         </template>
 
@@ -239,6 +253,15 @@ onMounted(() => {
     }
   }
 });
+const logout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("user_data");
+  loggedIn.value = false;
+  userProfileImage.value = "";
+  user.value = "";
+  router.push("/");
+};
 
 onMounted(() => {
   initializeAuthState();

@@ -1,7 +1,7 @@
 <template>
   <Header />
   <div
-    class="w-full max-w-xl mx-auto p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    class="w-full max-w-7xl mx-auto p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
   >
     <div class="flex flex-col items-center pb-10">
       <label class="cursor-pointer relative">

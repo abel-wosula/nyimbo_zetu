@@ -1,13 +1,13 @@
 <template>
   <Header activeLink="home" />
-  <div class="bg-white p-4 mx-auto min-h-screen">
+  <div class="bg-gray-200 p-4 mx-auto min-h-screen">
     <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
       <h2
-        class="mb-5 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        class="mb-5 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white"
       >
         Our Music
       </h2>
-      <p class="font-dark text-gray-700 lg:mb-4 sm:text-xl dark:text-gray-400">
+      <p class="font-dark text-gray-700 lg:mb-4 sm:text-lg dark:text-gray-400">
         Download your audio and music sheets from this page.
       </p>
     </div>
@@ -19,7 +19,7 @@
             <input
               type="text"
               id="search"
-              class="p-2 w-full text-sm border border-gray-800 rounded-lg"
+              class="p-2 w-full text-sm border border-gray-500 rounded-lg"
               placeholder="Search by artist name, lyrics, composer name or song title..."
               v-model="filters.search"
               @input="debouncedFetchData"
