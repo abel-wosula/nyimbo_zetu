@@ -1,4 +1,8 @@
 extend type Query {
-    songs(songsSearch: SongsSearchParams, page: Int, first: Int): [Song!]!
-        @paginate(defaultCount: 10)
+    songs(
+        songsSearch: SongsSearchParams
+        page: Int
+        first: Int
+        user_id: ID
+    ): [Song!]! @paginate(defaultCount: 10)
 }

@@ -191,7 +191,6 @@
   </section>
   <Footer />
 </template>
-
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -199,10 +198,11 @@ import { useMutation } from "@vue/apollo-composable";
 import { REGISTER_USER } from "@/graphql/Mutations/createUser";
 import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
+
+// Initialize router
 const router = useRouter();
 const loading = ref(false);
 
-// Form state
 const form = ref({
   email: "",
   password: "",
@@ -213,43 +213,51 @@ const form = ref({
   address: "",
 });
 
-// GraphQL mutation
-const { mutate: registerUser } = useMutation(REGISTER_USER, {
-  onDone: (data) => {
-    loading.value = false;
-    const user = data?.data?.createUser?.user;
+// Use mutation without callbacks initially
+const { mutate: registerUser } = useMutation(REGISTER_USER);
 
-    if (user) {
-      alert("Registration successful!");
-      router.push("/login");
-    } else {
-      alert("Registration failed. No user returned.");
-    }
-  },
-  onError: (error) => {
-    loading.value = false;
-    alert("An error occurred: " + error.message);
-  },
-});
-
-// Handle form submission
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  // 1. Validate password match
   if (form.value.password !== form.value.confirmPassword) {
-    alert("Passwords do not match!");
+    alert("⚠️ Passwords do not match!");
     return;
   }
 
   loading.value = true;
 
-  registerUser({
-    input: {
-      email: form.value.email,
-      password: form.value.password,
-      first_name: form.value.first_name,
-      last_name: form.value.last_name,
-      phone_number: form.value.phone_number,
-      address: form.value.address,
-    },
-  });
+  try {
+    // 2. Execute mutation and await response
+    const result = await registerUser({
+      input: {
+        email: form.value.email,
+        password: form.value.password,
+        first_name: form.value.first_name,
+        last_name: form.value.last_name,
+        phone_number: form.value.phone_number,
+        address: form.value.address,
+      },
+    });
+
+    // 3. Check for errors in GraphQL response
+    if (result.errors) {
+      throw new Error(result.errors[0].message);
+    }
+
+    // 4. Access response data correctly
+    const user = result.data?.createUser?.user;
+
+    if (user) {
+      alert("🎉 Account created successfully!");
+      router.push("/login");
+    } else {
+      throw new Error("User data not returned from server");
+    }
+  } catch (error) {
+    // 5. Handle all errors in one place
+    console.error("Registration error:", error);
+    alert(`❌ Registration failed: ${error.message}`);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>

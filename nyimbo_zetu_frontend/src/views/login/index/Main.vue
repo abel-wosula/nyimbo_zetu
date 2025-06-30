@@ -1,12 +1,12 @@
 <template>
   <Header />
-  <section class="bg-gray-50 dark:bg-gray-900 h-full">
+  <section class="bg-gray-100 dark:bg-gray-900 h-full">
     <div
-      class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-screen lg:py-0"
+      class="flex flex-col items-center justify-center px-4 py-6 mx-auto md:h-screen h-screen lg:py-0"
     >
       <a
         href="#"
-        class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        class="flex items-center mb-8 text-2xl font-semibold text-gray-900 dark:text-white"
       >
         <img
           class="w-8 h-8 mr-2"
@@ -84,7 +84,7 @@
             <button
               type="submit"
               :disabled="loading"
-              class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              class="w-full text-dark bg-blue-400 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
               {{ loading ? "Logging in..." : "Log in" }}
             </button>
@@ -120,7 +120,6 @@ const form = ref({
 });
 const loading = ref(false);
 const { mutate: userLogin, onDone, onError } = useMutation(LOGIN_USER);
-
 const handleLogin = async () => {
   try {
     if (!form.value.email || !form.value.password) {
@@ -128,36 +127,44 @@ const handleLogin = async () => {
       return;
     }
 
-    const variables = {
-      email: form.value.email,
-      password: form.value.password,
-    };
-
-    console.log("Sending variables:", variables);
-
     const { data } = await userLogin({
       email: form.value.email,
       password: form.value.password,
     });
+
     console.log("Login response:", data);
 
-    if (!data || !data.userLogin || !data.userLogin.token) {
-      alert("Invalid credentials or empty token");
+    const token = data?.userLogin?.token;
+    const user = data?.userLogin?.user;
+
+    if (!token || !user) {
+      alert("Invalid credentials or missing token/user");
       return;
     }
 
-    localStorage.setItem("token", data.userLogin.token);
-    router.push("/");
+    // ✅ Save both token and user
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(data.userLogin.user));
+
+    // ✅ Redirect to profile
+    alert("Login successful!");
+    router.push("/profile");
   } catch (error) {
     console.error("Login error:", error);
     alert("Login failed: " + error.message);
   }
 };
+
 onDone(({ data }) => {
-  localStorage.setItem("Token", data.userLogin.token);
-  router.push("/");
+  localStorage.setItem("auth_token", data.userLogin.token);
+  localStorage.setItem("user_data", JSON.stringify(data.userLogin.user));
+  window.dispatchEvent(new Event("storage")); // to trigger update
+  router.push("/profile");
 });
 onError((error) => {
   console.error("Login failed:", error.message);
+  // store user id
+  localStorage.setItem("token", data.userLogin.token);
+  localStorage.setItem("user", JSON.stringify(data.userLogin.user)); // store user
 });
 </script>

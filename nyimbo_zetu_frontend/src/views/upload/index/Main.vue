@@ -204,7 +204,6 @@
   </div>
   <Footer />
 </template>
-
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Header from "@/components/header/index/Main.vue";
