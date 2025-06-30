@@ -1,11 +1,12 @@
 import gql from "graphql-tag";
 
-export const CREATE_CATEGORY = gql`
+export const CREATE_SUBCATEGORY = gql`
   query createSubCategory {
-    subcategory(first: 10, page: 1) {
+    subcategory(first: 100) {
       data {
-       name
-       category_id
+        id
+        name
+        category_id
       }
       paginatorInfo {
         total
