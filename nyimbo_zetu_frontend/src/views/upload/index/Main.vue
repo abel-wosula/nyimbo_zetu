@@ -227,8 +227,8 @@ const categories = computed(() => {
 
   subs.forEach((sub) => {
     // Handle cases where category data might be missing
-    const catLabel =
-      sub.category?.name || `Category ${sub.category_id}` || "Uncategorized";
+    const catLabel = sub.category?.name;
+    if (!catLabel) return; 
 
     if (!map[catLabel]) map[catLabel] = [];
 

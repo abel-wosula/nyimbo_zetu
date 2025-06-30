@@ -26,7 +26,7 @@ class SubCategory extends BaseModel
     {
         return $this->hasMany(Song::class);
     }
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }

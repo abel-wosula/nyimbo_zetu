@@ -2,6 +2,7 @@ type SubCategory {
     id: ID!
     name: String!
     category_id: ID!
+    category: Category @belongsTo
     created_at: String!
 }
 

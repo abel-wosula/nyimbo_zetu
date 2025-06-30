@@ -7,6 +7,11 @@ export const CREATE_SUBCATEGORY = gql`
         id
         name
         category_id
+
+        category {
+          id
+          name
+        }
       }
       paginatorInfo {
         total
