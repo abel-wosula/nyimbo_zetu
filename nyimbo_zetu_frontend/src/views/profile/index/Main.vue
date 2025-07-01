@@ -106,7 +106,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Header from "@/components/header/index/Main.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
@@ -122,29 +122,44 @@ const user = ref({
 const songs = ref([]);
 const songPage = ref(1);
 const songTotalPages = ref(1);
-const userId = computed(() => user.value.id);
 
+// Set up the query only after user is loaded
+const userLoaded = ref(false);
+
+// Fetch songs only when user is ready
 const {
   result: userSongsResult,
   refetch: refetchUserSongs,
   onResult: onUserSongsResult,
+  loading,
 } = useQuery(
   CREATE_SONG,
   () => ({
-    search: "",
+    songsSearch: { search: "" }, // Wrap in songsSearch if your server expects that
     page: songPage.value,
     first: 10,
-    user_id: user.value.id,
+    user_id: user.value.id, // 👈 Ensure this is what your backend expects
   }),
-  { fetchPolicy: "network-only" }
+  {
+    enabled: false, // 🚫 prevent auto-fetch until user is loaded
+    fetchPolicy: "network-only",
+  }
 );
 
-// ✅ This is correct
-onUserSongsResult((result) => {
-  songs.value = result?.data?.songs?.data || [];
-  songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
-});
+// Watch for when user is loaded and trigger fetch
+watch(
+  () => user.value.id,
+  (newID) => {
+    if (newID) {
+      userLoaded.value = true;
+      refetchUserSongs(); // 👈 Trigger the query
+    }
+  }
+);
 
+// Handle the result
+
+// Load user info on mount
 onMounted(() => {
   const storedUser = localStorage.getItem("user");
   if (storedUser) {
@@ -168,7 +183,7 @@ const handleImageChange = (event) => {
     const reader = new FileReader();
     reader.onload = () => {
       user.value.profileImage = reader.result;
-      // Update localStorage (optional)
+      // Optionally update localStorage
       const storedUser = JSON.parse(localStorage.getItem("user"));
       localStorage.setItem(
         "user",
@@ -181,4 +196,22 @@ const handleImageChange = (event) => {
     reader.readAsDataURL(file);
   }
 };
+
+onUserSongsResult((result) => {
+  console.log("GraphQL result:", result); // 👀 Check here
+  songs.value = result?.data?.songs?.data || [];
+});
+watch(
+  () => user.value.id,
+  async (newID) => {
+    if (newID) {
+      console.log("User ID is ready, refetching songs for ID:", newID);
+      await refetchUserSongs(); // just trigger the query
+    }
+  }
+);
+watch(userSongsResult, (result) => {
+  console.log("Songs result from watch:", result);
+  songs.value = result?.songs?.data || [];
+});
 </script>

@@ -6,21 +6,23 @@ use App\Models\Song;
 
 class SongsQuery
 {
-    public function fetchSongs($_, $args)
+    public function __invoke($root, array $args)
     {
-        $songs = Song::query()->orderBy('id', 'ASC');
+        $query = Song::query();
 
-        $search = $args['search'] ?? '';
-
-        if ($search !== '') {
-            $songs->where(function ($query) use ($search) {
-                $query->where('title', 'LIKE', "%{$search}%")
-                    ->orWhere('artists', 'LIKE', "%{$search}%")
-                    ->orWhere('composer', 'LIKE', "%{$search}%")
-                    ->orWhere('lyrics', 'LIKE', "%{$search}%");
+        if (!empty($args['search'])) {
+            $query->where(function ($q) use ($args) {
+                $q->where('title', 'like', '%' . $args['search'] . '%')
+                    ->orWhere('composer', 'like', '%' . $args['search'] . '%')
+                    ->orWhere('artists', 'like', '%' . $args['search'] . '%')
+                    ->orWhere('lyrics', 'like', '%' . $args['search'] . '%');
             });
         }
 
-        return $songs; //DO NOT paginate here
+        if (!empty($args['user_id'])) {
+            $query->where('user_id', $args['user_id']);
+        }
+
+        return $query;
     }
 }
