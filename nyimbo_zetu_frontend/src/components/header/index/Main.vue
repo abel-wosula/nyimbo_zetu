@@ -53,7 +53,7 @@
               <span>Hello, {{ user.last_name }}</span>
               <button
                 @click="logout"
-                class="text-xs text-red-600 hover:text-red-800 underline ml-2"
+                class="text-xs text-gray-100 hover:text-gray-300 ml-2 p-3 bg-red-500 cursor-pointer rounded-xl"
               >
                 Logout
               </button>
@@ -121,6 +121,13 @@
                 >Analytics</a
               >
             </li>
+            <li>
+              <a
+                href="/contact"
+                class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
+                >Contact Us</a
+              >
+            </li>
           </ul>
         </div>
       </div>
@@ -155,7 +162,7 @@
         <!-- Profile section on mobile view -->
 
         <template v-if="loggedIn">
-          <div class="flex items-center gap-2 dark:text-white mb-6">
+          <div class="flex items-center gap-2 dark:text-white mb-6 pt-10">
             <a
               href="/profile"
               class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
@@ -165,7 +172,7 @@
             <span>Hello, {{ user.last_name }}</span>
             <button
               @click="logout"
-              class="text-sm text-red-500 hover:underline ml-2"
+              class="text-sm text-gray-100 hover:underline ml-2 p-2 bg-red-700 cursor-pointer"
             >
               Logout
             </button>
