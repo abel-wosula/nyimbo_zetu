@@ -267,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, onMounted, computed, nextTick, watch } from "vue";
 import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
 import { useQuery } from "@vue/apollo-composable";
@@ -294,26 +294,68 @@ const user = ref({
 const songs = ref([]);
 const songPage = ref(1);
 const songTotalPages = ref(1);
+
+// Set up the query only after user is loaded
+const userLoaded = ref(false);
+
+// Fetch songs only when user is ready
 const createSongLoading = ref(false);
 
 // Computed
 const userId = computed(() => user.value.id);
 
 // GraphQL Query
+
 const {
   result: userSongsResult,
   refetch: refetchUserSongs,
   onResult: onUserSongsResult,
+  loading,
 } = useQuery(
   CREATE_SONG,
   () => ({
-    search: "",
+    songsSearch: { search: "" }, // Wrap in songsSearch if your server expects that
     page: songPage.value,
     first: 10,
-    user_id: user.value.id,
+    user_id: user.value.id, // 👈 Ensure this is what your backend expects
   }),
-  { fetchPolicy: "network-only" }
+  {
+    enabled: false, // 🚫 prevent auto-fetch until user is loaded
+    fetchPolicy: "network-only",
+  }
 );
+
+
+// Watch for when user is loaded and trigger fetch
+watch(
+  () => user.value.id,
+  (newID) => {
+    if (newID) {
+      userLoaded.value = true;
+      refetchUserSongs(); // 👈 Trigger the query
+    }
+  }
+);
+
+// Handle the result
+
+// Load user info on mount
+onMounted(() => {
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    try {
+      const parsed = JSON.parse(storedUser);
+      user.value = {
+        ...parsed,
+        profileImage:
+          parsed.profileImage ||
+          "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
+      };
+    } catch (error) {
+      console.error("Error parsing user data", error);
+    }
+  }
+});
 
 // Methods
 const handleUploadForm = () => {
@@ -342,13 +384,13 @@ const showPdfPreview = (path) => {
   if (fullUrl) window.open(fullUrl, "_blank");
 };
 
+
 const handleImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = () => {
       user.value.profileImage = reader.result;
-      // Update localStorage
       const storedUser = JSON.parse(localStorage.getItem("user"));
       localStorage.setItem(
         "user",
@@ -361,6 +403,23 @@ const handleImageChange = (event) => {
     reader.readAsDataURL(file);
   }
 };
+
+onUserSongsResult((result) => {
+  console.log("GraphQL result:", result); // 👀 Check here
+  songs.value = result?.data?.songs?.data || [];
+});
+watch(
+  () => user.value.id,
+  async (newID) => {
+    if (newID) {
+      console.log("User ID is ready, refetching songs for ID:", newID);
+      await refetchUserSongs(); // just trigger the query
+    }
+  }
+);
+watch(userSongsResult, (result) => {
+  console.log("Songs result from watch:", result);
+  songs.value = result?.songs?.data || [];
 
 // Lifecycle Hooks
 onMounted(() => {
@@ -383,5 +442,6 @@ onMounted(() => {
 onUserSongsResult((result) => {
   songs.value = result?.data?.songs?.data || [];
   songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
+
 });
 </script>
