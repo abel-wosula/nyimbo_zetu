@@ -22,7 +22,7 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
-          <div>
+          <div v-if="!loggedIn">
             <button
               @click="handleUserLogin"
               class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"

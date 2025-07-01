@@ -24,16 +24,19 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
-    {
-      path: "/upload",
-      name: "upload",
-      component: Upload,
-      meta: { requiresAuth: true },
-    },
+
     {
       path: "/profile",
       name: "profile",
       component: Profile,
+      children: [
+        {
+          path: "upload",
+          name: "upload",
+          component: Upload,
+          meta: { requiresAuth: true },
+        },
+      ],
     },
   ],
 });

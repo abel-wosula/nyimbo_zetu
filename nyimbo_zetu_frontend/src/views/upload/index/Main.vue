@@ -1,217 +1,250 @@
 <template>
-  <Header />
-  <div class="max-w-2xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-8">Upload New Song</h1>
-
-    <form @submit.prevent="handleSubmit" class="space-y-6">
-      <!-- Song Title -->
-      <div>
-        <label for="title" class="block text-sm font-medium text-gray-700"
-          >Song Title *</label
-        >
-        <input
-          v-model="form.title"
-          type="text"
-          id="title"
-          required
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-        />
-      </div>
-
-      <!-- Artist -->
-      <div>
-        <label for="artist" class="block text-sm font-medium text-gray-700"
-          >Artist</label
-        >
-        <input
-          v-model="form.artist"
-          type="text"
-          id="artist"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-        />
-      </div>
-
-      <!-- Composer -->
-      <div>
-        <label for="composer" class="block text-sm font-medium text-gray-700"
-          >Composer</label
-        >
-        <input
-          v-model="form.composer"
-          type="text"
-          id="composer"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-        />
-      </div>
-
-      <!-- Category & Subcategory Dropdowns -->
-      <div class="space-y-6">
-        <!-- Category Dropdown -->
-        <div class="relative w-full">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Category *</label
-          >
-          <button
-            type="button"
-            @click="toggleCategoryDropdown"
-            class="border p-2 rounded-md w-full cursor-pointer bg-white text-gray-800 shadow-sm flex justify-between items-center focus:outline-none"
-          >
-            <span>{{ selectedCategory || "Select a category" }}</span>
-            <svg
-              class="w-4 h-4 ml-2 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-
-          <!-- Category Options -->
-          <div
-            v-if="showCategoryDropdown"
-            class="absolute z-50 mt-2 w-full bg-white border rounded-md shadow-lg"
-          >
-            <ul class="max-h-60 overflow-y-auto">
-              <li
-                v-for="(subs, cat) in categories"
-                :key="cat"
-                @click="selectCategory(cat)"
-                class="px-4 py-2 hover:bg-indigo-100 cursor-pointer"
-              >
-                {{ cat }}
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Subcategory Dropdown -->
-        <div v-if="selectedCategory" class="relative w-full">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Subcategory *</label
-          >
-          <button
-            type="button"
-            @click="toggleSubcategoryDropdown"
-            class="border p-2 rounded-md w-full cursor-pointer bg-white text-gray-800 shadow-sm flex justify-between items-center focus:outline-none"
-          >
-            <span>{{ selectedSubcategory || "Select a subcategory" }}</span>
-            <svg
-              class="w-4 h-4 ml-2 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
-
-          <!-- Subcategory Options -->
-          <div
-            v-if="showSubcategoryDropdown"
-            class="absolute z-50 mt-2 w-full bg-white border rounded-md shadow-lg"
-          >
-            <ul class="max-h-60 overflow-y-auto">
-              <li
-                v-for="sub in categories[selectedCategory]"
-                :key="sub.id"
-                @click="selectSubcategory(sub)"
-                class="px-4 py-2 hover:bg-indigo-100 cursor-pointer"
-              >
-                {{ sub.name }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- YouTube Link -->
-      <div>
-        <label for="youtube" class="block text-sm font-medium text-gray-700"
-          >YouTube Link</label
-        >
-        <input
-          v-model="form.ytlink"
-          type="url"
-          id="youtube"
-          placeholder="https://www.youtube.com/watch?v=..."
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-        />
-      </div>
-
-      <!-- PDF Upload -->
-      <div>
-        <label for="pdf" class="block text-sm font-medium text-gray-700"
-          >Sheet Music (PDF)</label
-        >
-        <input
-          @change="handlePdfUpload"
-          type="file"
-          id="pdf"
-          accept=".pdf"
-          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-        />
-      </div>
-
-      <!-- Audio/MIDI Upload -->
-      <div>
-        <label for="midi" class="block text-sm font-medium text-gray-700"
-          >Audio/MIDI File</label
-        >
-        <input
-          @change="handleAudioUpload"
-          type="file"
-          id="midi"
-          accept=".mp3,.wav,.mid,.midi"
-          class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-        />
-      </div>
-
-      <!-- Lyrics -->
-      <div>
-        <label for="lyrics" class="block text-sm font-medium text-gray-700"
-          >Lyrics</label
-        >
-        <textarea
-          v-model="form.lyrics"
-          id="lyrics"
-          rows="6"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-        ></textarea>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="flex justify-end">
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-hidden"
+  >
+    <div
+      class="max-w-3xl w-full max-h-[90vh] p-6 sm:p-8 relative bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none]"
+    >
+      <div class="[&::-webkit-scrollbar]:hidden">
         <button
-          type="submit"
-          class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          :disabled="isSubmitting || !formValid"
+          @click="closeModal"
+          class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl cursor-pointer"
         >
-          {{ isSubmitting ? "Uploading..." : "Upload Song" }}
+          ✖
         </button>
+        <h1
+          class="text-3xl font-bold text-center mb-8 text-indigo-600 dark:text-indigo-400"
+        >
+          Upload a New Song
+        </h1>
+
+        <form @submit.prevent="handleSubmit" class="space-y-6">
+          <!-- Song Title -->
+          <div>
+            <label
+              for="title"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Song Title *</label
+            >
+            <input
+              v-model="form.title"
+              type="text"
+              id="title"
+              required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          <!-- Artist -->
+          <div>
+            <label
+              for="artist"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Artist/Choir</label
+            >
+            <input
+              v-model="form.artist"
+              type="text"
+              id="artist"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          <!-- Composer -->
+          <div>
+            <label
+              for="composer"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Composer</label
+            >
+            <input
+              v-model="form.composer"
+              type="text"
+              id="composer"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          <!-- Category & Subcategory Dropdowns -->
+          <div class="space-y-6">
+            <!-- Category Dropdown -->
+            <div class="relative w-full">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Category *</label
+              >
+              <button
+                type="button"
+                @click="toggleCategoryDropdown"
+                class="border p-3 rounded-md w-full cursor-pointer bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm flex justify-between items-center focus:outline-none"
+              >
+                <span>{{ selectedCategory || "Select a category" }}</span>
+                <svg
+                  class="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Category Options -->
+              <div
+                v-if="showCategoryDropdown"
+                class="absolute z-50 mt-2 w-full bg-white dark:bg-gray-700 border rounded-md shadow-lg max-h-60 overflow-y-auto scrollbar-none"
+              >
+                <ul>
+                  <li
+                    v-for="(subs, cat) in categories"
+                    :key="cat"
+                    @click="selectCategory(cat)"
+                    class="px-4 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-600 cursor-pointer"
+                  >
+                    {{ cat }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Subcategory Dropdown -->
+            <div v-if="selectedCategory" class="relative w-full">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                >Subcategory *</label
+              >
+              <button
+                type="button"
+                @click="toggleSubcategoryDropdown"
+                class="border p-3 rounded-md w-full cursor-pointer bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-sm flex justify-between items-center focus:outline-none"
+              >
+                <span>{{ selectedSubcategory || "Select a subcategory" }}</span>
+                <svg
+                  class="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Subcategory Options -->
+              <div
+                v-if="showSubcategoryDropdown"
+                class="absolute z-50 mt-2 w-full bg-white dark:bg-gray-700 border rounded-md shadow-lg max-h-60 overflow-y-auto scrollbar-none"
+              >
+                <ul>
+                  <li
+                    v-for="sub in categories[selectedCategory]"
+                    :key="sub.id"
+                    @click="selectSubcategory(sub)"
+                    class="px-4 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-600 cursor-pointer"
+                  >
+                    {{ sub.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- YouTube Link -->
+          <div>
+            <label
+              for="youtube"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >YouTube Link</label
+            >
+            <input
+              v-model="form.ytlink"
+              type="url"
+              id="youtube"
+              placeholder="https://www.youtube.com/watch?v=..."
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+          </div>
+
+          <!-- PDF Upload -->
+          <div>
+            <label
+              for="pdf"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Sheet Music (PDF)</label
+            >
+            <input
+              @change="handlePdfUpload"
+              type="file"
+              id="pdf"
+              accept=".pdf"
+              class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-200 dark:hover:file:bg-indigo-800"
+            />
+          </div>
+
+          <!-- Audio/MIDI Upload -->
+          <div>
+            <label
+              for="midi"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Audio/MIDI File</label
+            >
+            <input
+              @change="handleAudioUpload"
+              type="file"
+              id="midi"
+              accept=".mp3,.wav,.mid,.midi"
+              class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900 dark:file:text-indigo-200 dark:hover:file:bg-indigo-800"
+            />
+          </div>
+
+          <!-- Lyrics -->
+          <div>
+            <label
+              for="lyrics"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Lyrics</label
+            >
+            <textarea
+              v-model="form.lyrics"
+              id="lyrics"
+              rows="6"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-700 dark:hover:bg-indigo-800 transition-colors"
+              :disabled="isSubmitting || !formValid"
+            >
+              {{ isSubmitting ? "Uploading..." : "Upload Song" }}
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
-  <Footer />
 </template>
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import Header from "@/components/header/index/Main.vue";
-import Footer from "@/components/footer/index/Main.vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { UPLOAD_SONG } from "@/graphql/Mutations/createSong";
 import { CREATE_SUBCATEGORY } from "@/graphql/Queries/createSubCategory.graphql";
 import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const closeModal = () => router.back();
 // Fetch subcategories from backend
 const {
   result: subcategoriesResult,
@@ -228,7 +261,7 @@ const categories = computed(() => {
   subs.forEach((sub) => {
     // Handle cases where category data might be missing
     const catLabel = sub.category?.name;
-    if (!catLabel) return; 
+    if (!catLabel) return;
 
     if (!map[catLabel]) map[catLabel] = [];
 
