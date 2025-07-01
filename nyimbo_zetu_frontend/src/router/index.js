@@ -4,6 +4,7 @@ import Login from "../views/login/index/Main.vue";
 import Home from "../views/home/index/Main.vue";
 import Upload from "../views/upload/index/Main.vue";
 import Profile from "../views/profile/index/Main.vue";
+import Featuring from "../views/featuring/index/Main.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,11 @@ const router = createRouter({
           meta: { requiresAuth: true },
         },
       ],
+    },
+    {
+      path: "/featuring",
+      name: "featuring",
+      component: Featuring,
     },
   ],
 });
