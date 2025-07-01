@@ -1,9 +1,9 @@
 <template>
   <Header />
   <div
-    class="w-full max-w-7xl mx-auto p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    class="w-full max-w-auto mx-auto p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
   >
-    <div class="flex flex-col items-center pb-10">
+    <div class="flex flex-col items-center pb-10 mx-auto max-w-screen-sm">
       <label class="cursor-pointer relative">
         <img
           class="w-24 h-24 mb-3 rounded-full shadow-lg object-cover"
@@ -77,15 +77,20 @@
         </div>
       </div>
     </div>
-    <div class="mt-8">
+    <div class="flex justify-center pt-5 dark:text-gray-200">
       <h3 class="text-xl font-semibold mb-4">My Uploaded Songs</h3>
-      <table class="w-full bg-white rounded shadow text-sm">
+    </div>
+    <div class="mt-8 overflow-x-auto col-span-12">
+      <table class="w-full bg-white rounded-lg shadow text-sm">
         <thead class="bg-gray-100 font-semibold">
           <tr>
-            <th class="p-3 text-left">Title</th>
+            <th class="p-3 text-left">Song Title</th>
             <th class="p-3 text-left">Composer</th>
-            <th class="p-3 text-left">Artist</th>
+            <th class="p-3 text-left">Artist/Choir</th>
             <th class="p-3 text-left">Lyrics</th>
+            <th class="p-3 text-left">Midi</th>
+            <th class="p-3 text-left">Score Sheet</th>
+            <th class="p-3 text-left">Youtube Link</th>
           </tr>
         </thead>
         <tbody>
@@ -94,6 +99,9 @@
             <td class="p-3">{{ song.composer }}</td>
             <td class="p-3">{{ song.artists }}</td>
             <td class="p-3">{{ song.lyrics }}</td>
+            <td class="p-3">{{ song.midi }}</td>
+            <td class="p-3">{{ song.pdf }}</td>
+            <td class="p-3">{{ song.ytlink }}</td>
           </tr>
           <tr v-if="songs.length === 0">
             <td colspan="4" class="p-3 text-center text-gray-500">
@@ -103,13 +111,42 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Upload song button -->
+    <div class="flex justify-end p-5">
+      <button
+        @click="handleUploadForm"
+        class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+        </svg>
+        Upload Song
+      </button>
+    </div>
+    <!-- Route modal outlet -->
+    <router-view v-slot="{ Component }">
+      <component
+        :is="Component"
+        class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center mt-20"
+      />
+    </router-view>
   </div>
+  <Footer />
 </template>
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Header from "@/components/header/index/Main.vue";
+import Footer from "@/components/footer/index/Main.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const handleUploadForm = () => {
+  router.push({ name: "upload" });
+};
 
 const user = ref({
   id: "",
