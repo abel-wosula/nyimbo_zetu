@@ -1,7 +1,7 @@
 <template>
   <Header />
   <div
-    class="w-full max-w-auto mx-auto p-4 bg-gray-100 border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    class="w-full max-w-auto mx-auto p-4 bg-gray-100 border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700"
   >
     <!-- Profile Section -->
     <div class="flex flex-col items-center pb-10 mx-auto max-w-screen-sm">
@@ -131,6 +131,12 @@
             class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors cursor-pointer"
           >
             Close
+          </button>
+          <button
+            @click="copyLyrics()"
+            class="px-4 py-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors cursor-pointer"
+          >
+            Copy
           </button>
         </div>
       </div>
@@ -384,4 +390,37 @@ onUserSongsResult((result) => {
   songs.value = result?.data?.songs?.data || [];
   songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
 });
+
+/* copy lyrics */
+const copyLyrics = async () => {
+  try {
+    // Modern clipboard API approach
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(currentLyrics.value);
+      alert("Lyrics copied to clipboard!");
+      return;
+    }
+
+    // Fallback for older browsers
+    const textarea = document.createElement("textarea");
+    textarea.value = currentLyrics.value;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      const successful = document.execCommand("copy");
+      if (!successful) {
+        throw new Error("Copy command failed");
+      }
+      alert("Lyrics copied to clipboard!");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  } catch (err) {
+    console.error("Failed to copy lyrics:", err);
+    alert("Failed to copy lyrics");
+  }
+};
 </script>
