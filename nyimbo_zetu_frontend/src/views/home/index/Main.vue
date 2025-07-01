@@ -27,6 +27,61 @@
           </div>
         </div>
       </div>
+      <!-- Lyrics Modal -->
+      <div
+        v-if="showLyricsDialog"
+        class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <div
+          class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col"
+        >
+          <!-- Header -->
+          <div class="flex justify-between items-center mb-4 flex-shrink-0">
+            <h3 class="text-xl font-semibold">
+              {{ currentSongTitle }} - Lyrics
+            </h3>
+            <button
+              @click="showLyricsDialog = false"
+              class="text-gray-500 hover:text-gray-700 cursor-pointer"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Scrollable Lyrics  -->
+          <div
+            class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
+            <div class="whitespace-pre-wrap pb-2 pr-2">
+              {{ currentLyrics }}
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="mt-4 flex justify-end flex-shrink-0">
+            <button
+              @click="showLyricsDialog = false"
+              class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Songs table -->
       <div class="col-span-12 p-4 overflow-x-auto">
         <div class="w-full">
           <table class="w-full text-sm bg-blue-200 rounded-lg">
@@ -61,7 +116,12 @@
                   <td class="px-2 py-4">{{ song.title }}</td>
                   <td class="px-2 py-4">{{ song.composer }}</td>
                   <td class="px-2 py-4">{{ song.artists }}</td>
-                  <td class="px-2 py-4">{{ song.lyrics }}</td>
+                  <td
+                    class="px-2 py-4 cursor-pointer lyrics-cell"
+                    @click="showLyrics(song.lyrics, song.title)"
+                  >
+                    {{ truncateLyrics(song.lyrics) }}
+                  </td>
                   <td class="px-2 py-4">
                     <div class="flex items-center gap-2">
                       <audio controls class="w-48 p-2 audio-player">
@@ -132,6 +192,9 @@ import { debounce } from "lodash";
 const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 // Reactive state
+const showLyricsDialog = ref(false);
+const currentLyrics = ref("");
+const currentSongTitle = ref("");
 const songs = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
@@ -216,6 +279,20 @@ watch(
     currentPage.value = 1;
   }
 );
+
+/* Lyrics dialog box */
+
+const showLyrics = (lyrics, title) => {
+  currentLyrics.value = lyrics;
+  currentSongTitle.value = title;
+  showLyricsDialog.value = true;
+};
+
+const truncateLyrics = (lyrics) => {
+  if (!lyrics) return "";
+  const words = lyrics.split(" ");
+  return words.length > 5 ? words.slice(0, 5).join(" ") + "..." : lyrics;
+};
 </script>
 
 <style scoped>
