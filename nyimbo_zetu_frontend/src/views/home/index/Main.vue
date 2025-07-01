@@ -169,7 +169,7 @@
       </div>
     </div>
   </div>
-  <div class="col-span-12 mt-4">
+  <div class="col-span-12 mt-4 pb-5">
     <Pagination
       :currentPage="currentPage"
       :totalPages="totalPages"

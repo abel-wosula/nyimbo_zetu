@@ -136,16 +136,16 @@ import { getCurrentWatcher } from "vue";
             </h2>
             <ul class="text-gray-600 dark:text-gray-400">
               <li class="mb-4">
-                <a href="#" class="hover:underline">Choirs</a>
+                <a href="/featuring" class="hover:underline">Choirs</a>
               </li>
               <li class="mb-4">
-                <a href="#" class="hover:underline">Artists</a>
+                <a href="/featuring" class="hover:underline">Artists</a>
               </li>
               <li class="mb-4">
-                <a href="#" class="hover:underline">Composers</a>
+                <a href="/featuring" class="hover:underline">Composers</a>
               </li>
               <li class="mb-4">
-                <a href="#" class="hover:underline">Studios</a>
+                <a href="/featuring" class="hover:underline">Studios</a>
               </li>
             </ul>
           </div>

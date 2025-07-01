@@ -102,9 +102,9 @@
             </li>
             <li>
               <a
-                href="/songs"
+                href="/featuring"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Songs</a
+                >Featuring</a
               >
             </li>
             <li>
@@ -116,9 +116,9 @@
             </li>
             <li>
               <a
-                href="trending"
+                href="/analytics"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Trending Songs</a
+                >Analytics</a
               >
             </li>
           </ul>
@@ -175,10 +175,10 @@
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
           <li><a href="/" @click="closeMenu">Home</a></li>
-          <li><a href="#" @click="closeMenu">Songs</a></li>
-          <li><a href="#" @click="closeMenu">Seasons</a></li>
-          <li><a href="#" @click="closeMenu">Trending Songs</a></li>
-          <li><a href="#" @click="closeMenu">Contact</a></li>
+          <li><a href="/featuring" @click="closeMenu">Featuring</a></li>
+          <li><a href="/seasons" @click="closeMenu">Seasons</a></li>
+          <li><a href="/analytics" @click="closeMenu">Analytics</a></li>
+          <li><a href="/contact" @click="closeMenu">Contact Us</a></li>
         </ul>
       </div>
 
