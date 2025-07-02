@@ -77,6 +77,12 @@
             >
               Close
             </button>
+            <button
+              @click="copyLyrics()"
+              class="px-4 py-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors cursor-pointer"
+            >
+              Copy
+            </button>
           </div>
         </div>
       </div>
@@ -292,6 +298,37 @@ const truncateLyrics = (lyrics) => {
   if (!lyrics) return "";
   const words = lyrics.split(" ");
   return words.length > 5 ? words.slice(0, 5).join(" ") + "..." : lyrics;
+};
+const copyLyrics = async () => {
+  try {
+    // Modern clipboard API approach
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(currentLyrics.value);
+      alert("Lyrics copied to clipboard!");
+      return;
+    }
+
+    // Fallback for older browsers
+    const textarea = document.createElement("textarea");
+    textarea.value = currentLyrics.value;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      const successful = document.execCommand("copy");
+      if (!successful) {
+        throw new Error("Copy command failed");
+      }
+      alert("Lyrics copied to clipboard!");
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  } catch (err) {
+    console.error("Failed to copy lyrics:", err);
+    alert("Failed to copy lyrics");
+  }
 };
 </script>
 
