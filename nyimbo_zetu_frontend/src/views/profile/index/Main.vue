@@ -1,7 +1,7 @@
 <template>
   <Header />
   <div
-    class="w-full max-w-auto mx-auto p-4 bg-gray-100 border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    class="w-full max-w-auto mx-auto p-4 bg-gray-200 border border-gray-200 shadow-sm "
   >
     <!-- Profile Section -->
     <div class="flex flex-col items-center pb-10 mx-auto max-w-screen-sm">
@@ -87,7 +87,7 @@
     <!-- Lyrics Modal -->
     <div
       v-if="showLyricsDialog"
-      class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+      class="fixed inset-0 z-50 bg-gray-800/80 bg-opacity-10 flex items-center justify-center"
     >
       <div
         class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col"
@@ -331,7 +331,6 @@ const {
   }
 );
 
-
 // Watch for when user is loaded and trigger fetch
 watch(
   () => user.value.id,
@@ -390,7 +389,6 @@ const showPdfPreview = (path) => {
   if (fullUrl) window.open(fullUrl, "_blank");
 };
 
-
 const handleImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -427,28 +425,28 @@ watch(userSongsResult, (result) => {
   console.log("Songs result from watch:", result);
   songs.value = result?.songs?.data || [];
 
-// Lifecycle Hooks
-onMounted(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    try {
-      const parsed = JSON.parse(storedUser);
-      user.value = {
-        ...parsed,
-        profileImage:
-          parsed.profileImage ||
-          "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
-      };
-    } catch (error) {
-      console.error("Error parsing user data", error);
+  // Lifecycle Hooks
+  onMounted(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        user.value = {
+          ...parsed,
+          profileImage:
+            parsed.profileImage ||
+            "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
+        };
+      } catch (error) {
+        console.error("Error parsing user data", error);
+      }
     }
-  }
+  });
 });
 
 onUserSongsResult((result) => {
   songs.value = result?.data?.songs?.data || [];
   songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
-
 });
 
 /* copy lyrics */

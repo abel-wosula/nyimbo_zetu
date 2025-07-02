@@ -1,19 +1,19 @@
 <template>
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-hidden"
+    class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-800/80 bg-opacity-50 overflow-hidden"
   >
     <div
-      class="max-w-3xl w-full max-h-[90vh] p-6 sm:p-8 relative bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none]"
+      class="max-w-3xl w-full max-h-[90vh] p-6 sm:p-8 relative bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none]"
     >
       <div class="[&::-webkit-scrollbar]:hidden">
         <button
           @click="closeModal"
-          class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white text-2xl cursor-pointer"
+          class="absolute top-4 right-4 text-gray-500 hover:text-black dark:hover:text-white md:text-2xl text-xl cursor-pointer"
         >
           ✖
         </button>
         <h1
-          class="text-3xl font-bold text-center mb-8 text-indigo-600 dark:text-indigo-400"
+          class="md:text-3xl text-xl font-bold text-center mb-8 text-indigo-600 dark:text-indigo-200"
         >
           Upload a New Song
         </h1>
@@ -80,7 +80,7 @@
               >
                 <span>{{ selectedCategory || "Select a category" }}</span>
                 <svg
-                  class="w-4 h-4 ml-2 text-gray-500 dark:text-gray-400"
+                  class="w-4 h-4 ml-2 text-gray-500 dark:text-gray-200"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -97,7 +97,7 @@
               <!-- Category Options -->
               <div
                 v-if="showCategoryDropdown"
-                class="absolute z-50 mt-2 w-full bg-white dark:bg-gray-700 border rounded-md shadow-lg max-h-60 overflow-y-auto scrollbar-none"
+                class="absolute z-50 mt-2 w-full bg-white dark:text-gray-100 dark:bg-gray-700 border rounded-md shadow-lg max-h-60 overflow-y-auto scrollbar-none"
               >
                 <ul>
                   <li
@@ -149,7 +149,7 @@
                     v-for="sub in categories[selectedCategory]"
                     :key="sub.id"
                     @click="selectSubcategory(sub)"
-                    class="px-4 py-2 hover:bg-indigo-100 dark:hover:bg-indigo-600 cursor-pointer"
+                    class="px-4 py-2 hover:bg-indigo-100 dark:text-gray-100 dark:hover:bg-indigo-600 cursor-pointer"
                   >
                     {{ sub.name }}
                   </li>
