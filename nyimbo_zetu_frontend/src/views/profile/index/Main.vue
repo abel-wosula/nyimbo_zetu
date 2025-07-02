@@ -325,7 +325,6 @@ const {
   }
 );
 
-
 // Watch for when user is loaded and trigger fetch
 watch(
   () => user.value.id,
@@ -384,7 +383,6 @@ const showPdfPreview = (path) => {
   if (fullUrl) window.open(fullUrl, "_blank");
 };
 
-
 const handleImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -417,31 +415,4 @@ watch(
     }
   }
 );
-watch(userSongsResult, (result) => {
-  console.log("Songs result from watch:", result);
-  songs.value = result?.songs?.data || [];
-
-// Lifecycle Hooks
-onMounted(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    try {
-      const parsed = JSON.parse(storedUser);
-      user.value = {
-        ...parsed,
-        profileImage:
-          parsed.profileImage ||
-          "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
-      };
-    } catch (error) {
-      console.error("Error parsing user data", error);
-    }
-  }
-});
-
-onUserSongsResult((result) => {
-  songs.value = result?.data?.songs?.data || [];
-  songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
-
-});
 </script>
