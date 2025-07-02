@@ -8,12 +8,12 @@
         Talk To The Developers
       </h2>
       <p
-        class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl"
+        class="mb-8 lg:mb-16 font-light text-center text-gray-700 dark:text-gray-400 sm:text-xl"
       >
         Got a technical issue? Want to send feedback about a better feature?
         Need details about our Services? Let us know.
       </p>
-      <h2 class="text-center text-gray-200 text-2xl p-5">
+      <h2 class="text-center text-gray-700 dark:text-gray-300 text-2xl p-5">
         Send Us Your Thoughts
       </h2>
       <form action="#" class="space-y-8">
@@ -106,7 +106,8 @@
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://github.com/Iamvinnie254"
+                target="_blank"
                 class="text-gray-200 hover:text-gray-400 transition-colors"
               >
                 <svg
@@ -178,7 +179,8 @@
                 </svg>
               </a>
               <a
-                href="#"
+                href="https://github.com/Awafula"
+                target="_blank"
                 class="text-gray-200 hover:text-gray-300 transition-colors"
               >
                 <svg

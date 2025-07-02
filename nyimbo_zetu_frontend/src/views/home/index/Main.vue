@@ -3,11 +3,11 @@
   <div class="bg-gray-200 p-4 mx-auto min-h-screen">
     <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
       <h2
-        class="mb-5 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+        class="mb-5 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-gray-800"
       >
         Our Music
       </h2>
-      <p class="font-dark text-gray-700 lg:mb-4 sm:text-lg dark:text-gray-400">
+      <p class="font-dark text-gray-700 lg:mb-4 sm:text-lg dark:text-gray-500">
         Download your audio and music sheets from this page.
       </p>
     </div>
@@ -30,7 +30,7 @@
       <!-- Lyrics Modal -->
       <div
         v-if="showLyricsDialog"
-        class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+        class="fixed inset-0 z-50 bg-gray-800/80 bg-opacity-10 flex items-center justify-center"
       >
         <div
           class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col"
