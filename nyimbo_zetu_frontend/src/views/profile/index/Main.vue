@@ -331,7 +331,6 @@ const {
   }
 );
 
-
 // Watch for when user is loaded and trigger fetch
 watch(
   () => user.value.id,
@@ -390,7 +389,6 @@ const showPdfPreview = (path) => {
   if (fullUrl) window.open(fullUrl, "_blank");
 };
 
-
 const handleImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -423,6 +421,7 @@ watch(
     }
   }
 );
+
 watch(userSongsResult, (result) => {
   console.log("Songs result from watch:", result);
   songs.value = result?.songs?.data || [];
