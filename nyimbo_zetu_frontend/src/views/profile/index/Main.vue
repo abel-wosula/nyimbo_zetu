@@ -32,58 +32,6 @@
       </span>
     </div>
 
-    <!-- Profile Information -->
-    <div class="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 class="text-2xl font-semibold mb-4">Profile Information</h2>
-      <div class="flex flex-wrap gap-4">
-        <div class="flex-1">
-          <label
-            for="first_name"
-            class="block mb-1 text-sm font-medium text-gray-700"
-            >First Name</label
-          >
-          <input
-            disabled
-            type="text"
-            id="first_name"
-            name="first_name"
-            v-model="user.first_name"
-            class="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-
-        <div class="flex-1">
-          <label
-            for="last_name"
-            class="block mb-1 text-sm font-medium text-gray-700"
-            >Last Name</label
-          >
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            v-model="user.last_name"
-            class="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-
-        <div class="flex-1">
-          <label
-            for="email"
-            class="block mb-1 text-sm font-medium text-gray-700"
-            >Email</label
-          >
-          <input
-            type="email"
-            id="email"
-            name="email"
-            v-model="user.email"
-            class="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-      </div>
-    </div>
-
     <!-- Lyrics Modal -->
     <div
       v-if="showLyricsDialog"
@@ -426,6 +374,7 @@ watch(userSongsResult, (result) => {
   console.log("Songs result from watch:", result);
   songs.value = result?.songs?.data || [];
 
+
   // Lifecycle Hooks
   onMounted(() => {
     const storedUser = localStorage.getItem("user");
@@ -448,6 +397,7 @@ watch(userSongsResult, (result) => {
 onUserSongsResult((result) => {
   songs.value = result?.data?.songs?.data || [];
   songTotalPages.value = result?.data?.songs?.paginatorInfo?.lastPage || 1;
+
 });
 
 /* copy lyrics */
