@@ -1,13 +1,11 @@
 <template>
   <header class="sticky top-0 z-[8888]">
-    <nav
-      class="bg-gray-300 border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800"
-    >
+    <nav class="bg-gray-300 border-gray-200 px-4 lg:px-6 py-5 dark:bg-gray-800">
       <div
         class="flex flex-wrap justify-between items-center mx-auto min-w-xs max-w-screen-xl"
       >
         <!-- Logo -->
-        <a href="/" class="flex items-center">
+        <router-link to="/" class="flex items-center">
           <img
             src="../../../assets/android-chrome-512x512.png"
             class="mr-3 h-6 rounded-full sm:h-9"
@@ -18,7 +16,7 @@
           >
             Nyimbo Zetu
           </span>
-        </a>
+        </router-link>
 
         <!-- Action Buttons -->
         <div class="flex items-center md:gap-6 gap-0.5 md:order-2">
@@ -40,8 +38,8 @@
             class="items-center gap-5 dark:text-white hidden lg:flex"
           >
             <div class="flex items-center gap-2">
-              <a
-                href="/profile"
+              <router-link
+                to="/profile"
                 class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
               >
                 <img
@@ -49,7 +47,7 @@
                   alt="Profile"
                   class="w-full h-full object-cover"
                 />
-              </a>
+              </router-link>
               <span>Hello, {{ user.last_name }}</span>
               <button
                 @click="logout"
@@ -62,7 +60,7 @@
           <!-- Toggle Button -->
           <button
             @click="toggleMenu"
-            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 cursor-pointer"
+            class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 cursor-pointer transition-smooth"
           >
             <svg
               v-if="!isOpen"
@@ -94,38 +92,38 @@
             class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0"
           >
             <li>
-              <a
-                href="/"
+              <router-link
+                to="/"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Home</a
+                >Home</router-link
               >
             </li>
             <li>
-              <a
-                href="/featuring"
+              <router-link
+                to="/featuring"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Featuring</a
+                >Featuring</router-link
               >
             </li>
             <li>
-              <a
-                href="/seasons"
+              <router-link
+                to="/seasons"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Seasons</a
+                >Seasons</router-link
               >
             </li>
             <li>
-              <a
-                href="/analytics"
+              <router-link
+                to="/analytics"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Analytics</a
+                >Analytics</router-link
               >
             </li>
             <li>
-              <a
-                href="/contact"
+              <router-link
+                to="/contact"
                 class="block py-2 pr-4 pl-3 text-gray-700 hover:text-indigo-600 dark:text-gray-400"
-                >Contact Us</a
+                >Contact Us</router-link
               >
             </li>
           </ul>
@@ -136,7 +134,7 @@
       <div
         v-show="isOpen"
         ref="mobileMenu"
-        class="fixed top-0 right-0 w-64 h-full bg-white dark:bg-gray-900 shadow-lg z-50 p-6 transform transition-transform duration-300"
+        class="fixed top-0 right-0 w-64 h-full bg-gray-300 dark:bg-gray-900 shadow-lg z-50 p-6 transform transition-transform duration-300"
         :class="isOpen ? 'translate-x-0' : 'translate-x-full'"
       >
         <!-- X Button -->
@@ -163,16 +161,16 @@
 
         <template v-if="loggedIn">
           <div class="flex items-center gap-2 dark:text-white mb-6 pt-10">
-            <a
-              href="/profile"
+            <router-link
+              to="/profile"
               class="block w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-300 dark:ring-white focus:outline-none focus:ring-4 focus:ring-blue-500"
             >
               <img :src="userProfileImage" class="w-full h-full object-cover" />
-            </a>
+            </router-link>
             <span>Hello, {{ user.last_name }}</span>
             <button
               @click="logout"
-              class="text-sm text-gray-100 hover:underline ml-2 p-2 bg-red-700 cursor-pointer"
+              class="text-sm text-gray-100 hover:underline ml-2 p-2 bg-red-700 rounded-lg cursor-pointer"
             >
               Logout
             </button>
@@ -181,18 +179,34 @@
 
         <!-- Links -->
         <ul class="mt-12 space-y-6 text-gray-800 dark:text-white font-semibold">
-          <li><a href="/" @click="closeMenu">Home</a></li>
-          <li><a href="/featuring" @click="closeMenu">Featuring</a></li>
-          <li><a href="/seasons" @click="closeMenu">Seasons</a></li>
-          <li><a href="/analytics" @click="closeMenu">Analytics</a></li>
-          <li><a href="/contact" @click="closeMenu">Contact Us</a></li>
+          <li><router-link to="/" @click="closeMenu">Home</router-link></li>
+          <li>
+            <router-link to="/featuring" @click="closeMenu"
+              >Featuring</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/seasons" @click="closeMenu"
+              >Seasons</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/analytics" @click="closeMenu"
+              >Analytics</router-link
+            >
+          </li>
+          <li>
+            <router-link to="/contact" @click="closeMenu"
+              >Contact Us</router-link
+            >
+          </li>
         </ul>
       </div>
 
       <!-- Overlay -->
       <div
         v-if="isOpen"
-        class="fixed inset-0 bg-black bg-opacity-50 z-40"
+        class="fixed inset-0 bg-gray-800/80 bg-opacity-50 z-40"
         @click="closeMenu"
       ></div>
     </nav>
