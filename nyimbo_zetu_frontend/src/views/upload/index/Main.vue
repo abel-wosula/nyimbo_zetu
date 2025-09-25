@@ -1,8 +1,10 @@
 <template>
   <div
     class="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-800/80 bg-opacity-50 overflow-hidden"
+    @click="handleBackdropClick"
   >
     <div
+      ref="modalContent"
       class="max-w-3xl w-full max-h-[90vh] p-6 sm:p-8 relative bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none]"
     >
       <div class="[&::-webkit-scrollbar]:hidden">
@@ -68,7 +70,7 @@
           <!-- Category & Subcategory Dropdowns -->
           <div class="space-y-6">
             <!-- Category Dropdown -->
-            <div class="relative w-full">
+            <div class="relative w-full category-dropdown">
               <label
                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >Category *</label
@@ -113,7 +115,10 @@
             </div>
 
             <!-- Subcategory Dropdown -->
-            <div v-if="selectedCategory" class="relative w-full">
+            <div
+              v-if="selectedCategory"
+              class="relative w-full subcategory-dropdown"
+            >
               <label
                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                 >Subcategory *</label
@@ -234,8 +239,23 @@
         </form>
       </div>
     </div>
+
+    <!-- Toast Notifications -->
+    <div class="fixed top-4 right-4 z-[9999] space-y-2">
+      <div
+        v-for="(toast, index) in toasts"
+        :key="index"
+        :class="[
+          'px-4 py-2 rounded shadow-md text-white animate-fade-in',
+          toast.type === 'success' ? 'bg-green-600' : 'bg-red-600',
+        ]"
+      >
+        {{ toast.message }}
+      </div>
+    </div>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { UPLOAD_SONG } from "@/graphql/Mutations/createSong";
@@ -245,93 +265,68 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const closeModal = () => router.back();
-// Fetch subcategories from backend
-const {
-  result: subcategoriesResult,
-  loading: subcategoriesLoading,
-  error: subcategoriesError,
-} = useQuery(CREATE_SUBCATEGORY);
+const modalContent = ref(null);
 
-// Computed: map subcategories -> categories
+// Toast state
+const toasts = ref([]);
+const showToast = (message, type = "success") => {
+  const id = Date.now();
+  toasts.value.push({ id, message, type });
+  setTimeout(() => {
+    toasts.value = toasts.value.filter((t) => t.id !== id);
+  }, 3000);
+};
+
+// Handle clicking outside modal
+const handleBackdropClick = (event) => {
+  if (event.target === event.currentTarget) {
+    closeModal();
+  }
+};
+
+// Fetch subcategories
+const { result: subcategoriesResult } = useQuery(CREATE_SUBCATEGORY);
 
 const categories = computed(() => {
   const map = {};
   const subs = subcategoriesResult.value?.subcategory?.data || [];
-
   subs.forEach((sub) => {
-    // Handle cases where category data might be missing
     const catLabel = sub.category?.name;
     if (!catLabel) return;
-
     if (!map[catLabel]) map[catLabel] = [];
-
-    const subWithId = {
-      ...sub,
-      id: sub.id || sub.category_id,
-    };
-
-    map[catLabel].push(subWithId);
+    map[catLabel].push({ ...sub, id: sub.id || sub.category_id });
   });
-
   return map;
 });
 
-//validating subcategory ids
-const validSubcategoryIds = computed(() => {
-  const subs = subcategoriesResult.value?.subcategory?.data || [];
-  return subs
-    .map((sub) => sub.id || sub.category_id)
-    .filter((id) => id !== undefined);
-});
-
-//reactive form states
+// Form state
 const form = ref({
   title: "",
   artist: "",
   composer: "",
   subcategory_id: "",
-  season: "",
   ytlink: "",
   pdf: null,
   midi: null,
   lyrics: "",
 });
 const isSubmitting = ref(false);
+const formValid = computed(
+  () => !!form.value.title && !!form.value.subcategory_id
+);
 
-//validation computed {form validation}
-const formValid = computed(() => {
-  return !!form.value.title && !!form.value.subcategory_id;
-});
+// Mutation
+const { mutate: createSong } = useMutation(UPLOAD_SONG);
 
-//mutation : createSong
+const handlePdfUpload = (e) => (form.value.pdf = e.target.files[0]);
+const handleAudioUpload = (e) => (form.value.midi = e.target.files[0]);
 
-const { mutate: createSong } = useMutation(UPLOAD_SONG, {
-  onDone({ data }) {
-    console.log("Mutation result:", data);
-    alert("Song uploaded successfully!");
-    resetForm();
-  },
-  onError(error) {
-    console.error("Upload error:", error);
-    alert(`Upload failed: ${error.message}`);
-  },
-});
-
-//utility methods
-const handlePdfUpload = (e) => {
-  form.value.pdf = e.target.files[0];
-};
-
-const handleAudioUpload = (e) => {
-  form.value.midi = e.target.files[0];
-};
 const resetForm = () => {
   form.value = {
     title: "",
     artist: "",
     composer: "",
     subcategory_id: "",
-    season: "",
     ytlink: "",
     pdf: null,
     midi: null,
@@ -339,16 +334,16 @@ const resetForm = () => {
   };
   selectedCategory.value = "";
   selectedSubcategory.value = "";
+  document.getElementById("pdf").value = "";
+  document.getElementById("midi").value = "";
 };
 
 const handleSubmit = async () => {
   if (!formValid.value) {
-    console.error("Form validation failed");
+    showToast("Please fill required fields", "error");
     return;
   }
-
   isSubmitting.value = true;
-
   try {
     const input = {
       title: form.value.title,
@@ -361,30 +356,19 @@ const handleSubmit = async () => {
       midi: form.value.midi,
       user_id: 1,
     };
-
-    // Create the mutation variables
-    const variables = { input };
-    const { data } = await createSong(variables, {
-      context: {
-        hasUpload: true, // Important for file uploads
-      },
-    });
-
-    console.log("Upload successful:", data);
-    alert("Song uploaded successfully!");
+    await createSong({ input }, { context: { hasUpload: true } });
+    showToast("Song uploaded successfully!", "success");
     resetForm();
+    closeModal();
   } catch (error) {
-    console.error("Upload failed:", {
-      error: error.message,
-      graphQLErrors: error.graphQLErrors,
-      networkError: error.networkError,
-    });
-    alert(`Upload failed: ${error.message}`);
+    console.error("Upload failed:", error);
+    showToast(`Upload failed: ${error.message}`, "error");
   } finally {
     isSubmitting.value = false;
   }
 };
-// Reactive states
+
+// Category/Subcategory dropdown
 const selectedCategory = ref("");
 const selectedSubcategory = ref("");
 const showCategoryDropdown = ref(false);
@@ -394,61 +378,45 @@ const toggleCategoryDropdown = () => {
   showCategoryDropdown.value = !showCategoryDropdown.value;
   if (showCategoryDropdown.value) showSubcategoryDropdown.value = false;
 };
-
 const toggleSubcategoryDropdown = () => {
   if (!selectedCategory.value) return;
   showSubcategoryDropdown.value = !showSubcategoryDropdown.value;
+  if (showSubcategoryDropdown.value) showCategoryDropdown.value = false;
 };
-
 const selectCategory = (cat) => {
   selectedCategory.value = cat;
   selectedSubcategory.value = "";
   form.value.subcategory_id = "";
   showCategoryDropdown.value = false;
 };
-
 const selectSubcategory = (sub) => {
-  // Use category_id as fallback ID
   const subId = sub.id || sub.category_id;
-
-  if (!subId) {
-    console.error("No valid ID found for subcategory:", sub);
-    return;
-  }
-
+  if (!subId) return;
   selectedSubcategory.value = sub.name;
   form.value.subcategory_id = subId;
   showSubcategoryDropdown.value = false;
-
-  console.log("Selected subcategory:", {
-    id: subId,
-    name: sub.name,
-    currentValue: form.value.subcategory_id,
-  });
 };
 
-// Optional: close dropdowns on outside click
-onMounted(() => {
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest(".relative")) {
-      showCategoryDropdown.value = false;
-      showSubcategoryDropdown.value = false;
-    }
-  });
-});
-
-// Debug form data
-const debugFormData = () => {
-  console.group("Current Form Data");
-  console.log("Title:", form.value.title);
-  console.log("Artist:", form.value.artist);
-  console.log("Composer:", form.value.composer);
-  console.log("Subcategory ID:", form.value.subcategory_id);
-  console.log("Selected Category:", selectedCategory.value);
-  console.log("Selected Subcategory:", selectedSubcategory.value);
-  console.log("PDF File:", form.value.pdf?.name || "None");
-  console.log("Audio File:", form.value.midi?.name || "None");
-  console.groupEnd();
+// Escape key
+const handleKeydown = (event) => {
+  if (event.key === "Escape") closeModal();
 };
-debugFormData();
+onMounted(() => document.addEventListener("keydown", handleKeydown));
+onUnmounted(() => document.removeEventListener("keydown", handleKeydown));
 </script>
+
+<style scoped>
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+</style>
