@@ -27,10 +27,12 @@
           </div>
         </div>
       </div>
+
       <!-- Lyrics Modal -->
       <div
         v-if="showLyricsDialog"
         class="fixed inset-0 z-50 bg-gray-800/80 bg-opacity-10 flex items-center justify-center"
+        @click.self="showLyricsDialog = false"
       >
         <div
           class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col"
@@ -182,11 +184,22 @@
       @page-changed="fetchData"
     />
   </div>
+
+  <!-- ✅ Toast Notification -->
+  <transition name="fade">
+    <div
+      v-if="toastMessage"
+      class="fixed top-4 right-4 bg-green-500 text-white text-xl px-10 py-3 rounded shadow-lg z-[9999]"
+    >
+      {{ toastMessage }}
+    </div>
+  </transition>
+
   <Footer />
 </template>
 
 <script setup>
-import { ref, reactive, watch, watchEffect, onMounted } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
@@ -210,10 +223,12 @@ const filters = reactive({
   search: "",
 });
 
+// ✅ Toast state
+const toastMessage = ref("");
+
 // Apollo GraphQL Query
 const {
   loading: createSongLoading,
-  result: songsResult,
   onResult,
   onError,
   refetch,
@@ -257,8 +272,6 @@ const showPdfPreview = (path) => {
 
 // Handle query results
 onResult((result) => {
-  console.log("Paginator Info:", result.data?.songs?.paginatorInfo);
-
   if (result.data?.songs?.data) {
     songs.value = result.data.songs.data;
     totalPages.value = result.data.songs.paginatorInfo.lastPage || 1;
@@ -272,6 +285,7 @@ onError((error) => {
   console.error("GraphQL Error:", error);
   songs.value = [];
 });
+
 watch(currentPage, (newPage) => {
   refetch({
     search: filters.search,
@@ -279,6 +293,7 @@ watch(currentPage, (newPage) => {
     first: filters.first,
   });
 });
+
 watch(
   () => filters.search,
   () => {
@@ -287,7 +302,6 @@ watch(
 );
 
 /* Lyrics dialog box */
-
 const showLyrics = (lyrics, title) => {
   currentLyrics.value = lyrics;
   currentSongTitle.value = title;
@@ -299,35 +313,33 @@ const truncateLyrics = (lyrics) => {
   const words = lyrics.split(" ");
   return words.length > 5 ? words.slice(0, 5).join(" ") + "..." : lyrics;
 };
+
+/* Copy lyrics with toast */
 const copyLyrics = async () => {
   try {
-    // Modern clipboard API approach
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(currentLyrics.value);
-      alert("Lyrics copied to clipboard!");
-      return;
-    }
-
-    // Fallback for older browsers
-    const textarea = document.createElement("textarea");
-    textarea.value = currentLyrics.value;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.select();
-
-    try {
-      const successful = document.execCommand("copy");
-      if (!successful) {
-        throw new Error("Copy command failed");
-      }
-      alert("Lyrics copied to clipboard!");
-    } finally {
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = currentLyrics.value;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
       document.body.removeChild(textarea);
     }
+
+    // ✅ Close modal after copy
+    showLyricsDialog.value = false;
+
+    // ✅ Show toast
+    toastMessage.value = "Lyrics copied ✅";
+    setTimeout(() => {
+      toastMessage.value = "";
+    }, 3000);
   } catch (err) {
     console.error("Failed to copy lyrics:", err);
-    alert("Failed to copy lyrics");
   }
 };
 </script>
@@ -359,5 +371,15 @@ tr:hover td {
 .audio-player::-webkit-media-controls-play-button,
 .audio-player::-webkit-media-controls-mute-button {
   filter: invert(1);
+}
+
+/* ✅ Toast transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
