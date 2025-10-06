@@ -30,4 +30,21 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Return a display name for Filament and other UI components.
+     */
+    public function getFilamentName(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}") ?: $this->email;
+    }
+
+    /**
+     * Optionally, define a 'name' accessor for compatibility with packages
+     * expecting a 'name' attribute on the User model.
+     */
+    public function getNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}") ?: $this->email;
+    }
 }
