@@ -27,16 +27,21 @@ class  Song extends BaseModel
         'ytlink',
         'subcategory_id',
         'user_id'
-        
+
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
-    public function subCategory(): BelongsTo
+    public function category()
     {
-        return $this->belongsTo(SubCategory::class);
+        return $this->belongsTo(Category::class);
+    }
+
+
+    public function subcategory(): BelongsTo
+    {
+        return $this->belongsTo(SubCategory::class, 'subcategory_id');
     }
 }
