@@ -52,7 +52,7 @@ class SongResource extends Resource
                 FileUpload::make('pdf')
                     ->label('PDF File')
                     ->disk('public') // ✅ make sure this matches config/filesystems.php
-                    ->directory('uploads/pdf')
+                    ->directory('/storage/uploads/pdf')
                     ->maxSize(10240)
                     ->acceptedFileTypes(['application/pdf'])
                     ->required()
@@ -61,23 +61,12 @@ class SongResource extends Resource
                 FileUpload::make('midi')
                     ->label('MIDI / MP3 / WAV File')
                     ->disk('public')
-                    ->directory('uploads/midi')
+                    ->directory('/storage/uploads/midi')
                     ->maxSize(10240)
                     ->rules([
                         'mimes:mp3,mid,wav',
                     ])
                     ->helperText('Accepted formats: MP3, MIDI (.mid), WAV'),
-
-
-
-
-
-                /*   Select::make('category_id')
-                    ->label('Category')
-                    ->relationship('category', 'name')
-                    ->required()
-                    ->searchable()
-                    ->preload(), */
 
                 Select::make('subcategory_id')
                     ->label('SubCategory')
@@ -97,7 +86,6 @@ class SongResource extends Resource
                 TextColumn::make('artists')->label('Artists/Choir')->sortable()->searchable(),
                 TextColumn::make('composer')->label('Composer')->sortable()->searchable(),
                 TextColumn::make('subcategory.name')->label('SubCategory')->sortable()->searchable(),
-                //TextColumn::make('category.name')->label('Category')->sortable()->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
