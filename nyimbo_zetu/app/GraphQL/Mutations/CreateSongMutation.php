@@ -4,13 +4,12 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Song;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class CreateSongMutation
 {
-    public function __invoke($_, array $args)
+    public function createSong($_, array $args)
     {
         // Validate inputs
         $validator = Validator::make($args, [
@@ -21,8 +20,8 @@ class CreateSongMutation
             'lyrics' => 'nullable|string',
             'subcategory_id' => 'nullable|integer',
             'user_id' => 'nullable|integer',
-            'pdf' => 'required|file|mimes:pdf',
-            'midi' => 'required|file|mimes:mp3,mid,wav',
+            'pdf' => 'required|file|mimes:pdf|max:10240', // 10MB limit
+            'midi' => 'required|file|mimes:mp3,mid,wav|max:20480', // 20MB limit
         ]);
 
         if ($validator->fails()) {
@@ -32,30 +31,35 @@ class CreateSongMutation
             ];
         }
 
+        // Access validated data
+        $data = $validator->validated();
+
         /** @var UploadedFile $pdf */
-        $pdf = $args['pdf'];
+        $pdf = $data['pdf'];
         /** @var UploadedFile $midi */
-        $midi = $args['midi'];
+        $midi = $data['midi'];
 
-        // Generate file names
-        $fileName = Str::slug(pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . time() . '.pdf';
-        $audioName = Str::slug(pathinfo($midi->getClientOriginalName(), PATHINFO_FILENAME)) . '-' . time() . '.' . $midi->getClientOriginalExtension();
+        // Generate safe file names
+        $pdfFileName = Str::slug(pathinfo($pdf->getClientOriginalName(), PATHINFO_FILENAME))
+            . '-' . time() . '.pdf';
+        $midiFileName = Str::slug(pathinfo($midi->getClientOriginalName(), PATHINFO_FILENAME))
+            . '-' . time() . '.' . $midi->getClientOriginalExtension();
 
-        // Store files in public disk
-        $filePath = $pdf->storeAs('uploads/pdf', $fileName, 'public');
-        $audioPath = $midi->storeAs('uploads/midi', $audioName, 'public');
+        // Store files in public storage
+        $pdfPath = $pdf->storeAs('uploads/pdf', $pdfFileName, 'public');
+        $midiPath = $midi->storeAs('uploads/midi', $midiFileName, 'public');
 
-        // Save to DB
+        // Save song to database
         $upload = Song::create([
-            'artists' => $args['artists'],
-            'title' => $args['title'],
-            'composer' => $args['composer'] ?? null,
-            'ytlink' => $args['ytlink'] ?? null,
-            'lyrics' => $args['lyrics'] ?? null,
-            'subcategory_id' => $args['subcategory_id'] ?? null,
-            'user_id' => $args['user_id'] ?? null,
-            'pdf' => $filePath,
-            'midi' => $audioPath,
+            'artists' => $data['artists'],
+            'title' => $data['title'],
+            'composer' => $data['composer'] ?? null,
+            'ytlink' => $data['ytlink'] ?? null,
+            'lyrics' => $data['lyrics'] ?? null,
+            'subcategory_id' => $data['subcategory_id'] ?? null,
+            'user_id' => $data['user_id'] ?? null,
+            'pdf' => $pdfPath,
+            'midi' => $midiPath,
         ]);
 
         return [

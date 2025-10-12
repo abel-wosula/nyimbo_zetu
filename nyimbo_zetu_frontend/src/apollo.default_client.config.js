@@ -6,13 +6,13 @@ import {
   createHttpLink,
 } from "@apollo/client/core";
 
-const { httpLink } = createHttpLink({
+const httpLink = createHttpLink({
   uri: "http://localhost:8000/graphql",
 });
 
 const getAuthToken = () => {
-  return localStorage.getItem("auth_token")
-}
+  return localStorage.getItem("auth_token");
+};
 const uploadLink = createUploadLink({
   uri: "http://localhost:8000/graphql/", // or your server URL
   headers: {
