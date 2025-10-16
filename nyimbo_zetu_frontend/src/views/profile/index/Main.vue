@@ -200,7 +200,7 @@
     <div class="flex justify-end p-5">
       <button
         @click="handleUploadForm"
-        class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
+        class="flex items-center gap-2 text-xs md:text-lg px-2 py-2 mb-5 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
       >
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />

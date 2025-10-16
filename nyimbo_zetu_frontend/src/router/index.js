@@ -6,6 +6,8 @@ import Upload from "../views/upload/index/Main.vue";
 import Profile from "../views/profile/index/Main.vue";
 import Featuring from "../views/featuring/index/Main.vue";
 import Contact from "../views/contact/index/Main.vue";
+import Seasons from "../views/seasons/index/main.vue"
+import Analytics from "../views/analytics/index/Main.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +46,16 @@ const router = createRouter({
       path: "/featuring",
       name: "featuring",
       component: Featuring,
+    },
+    {
+      path: "/seasons",
+      name: "Seasons",
+      component: Seasons,
+    },
+    {
+      path: "/analytics",
+      name: "Analytics",
+      component: Analytics,
     },
     {
       path: "/contact",

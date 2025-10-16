@@ -1,6 +1,6 @@
 <template>
   <Header />
-  <section class="bg-gray-100 dark:bg-gray-900 h-full">
+  <section class="bg-gray-100 dark:bg-gray-900 h-screen">
     <div
       class="flex flex-col items-center justify-center px-4 py-6 mx-auto md:h-screen h-screen lg:py-0"
     >
