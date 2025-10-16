@@ -184,12 +184,12 @@ const artists = [
     youtube: "https://www.youtube.com/@joanwambura",
   },
   {
-    name: "Annastacia Muema",
+    name: "Dennis Wambua",
     image: "",
     description:
-      "Catholic solo artist known for her inspirational hymns and liturgical music.",
+      "Catholic solo artist known for his inspirational hymns and liturgical music.",
     genre: "Catholic Solo",
-    youtube: "https://www.youtube.com/@anastaciamuema",
+    youtube: "https://www.youtube.com/@denniswambua",
   },
   {
     name: "Monica Mbithe",
