@@ -1,95 +1,38 @@
 <template>
-  <Header activeLink="home" />
+  <Header activeLink="profile" />
+
   <div class="bg-gray-200 p-4 mx-auto min-h-screen">
-    <div class="mx-auto max-w-screen-sm text-center mb-2 lg:mb-8">
-      <h2
-        class="mb-5 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-gray-800"
-      >
-        Our Music
-      </h2>
-      <p class="font-dark text-gray-700 lg:mb-4 sm:text-lg dark:text-gray-500">
-        Download your audio and music sheets from this page.
-      </p>
-    </div>
-    <div class="grid grid-cols-12 items-center gap-1">
-      <div class="filters col-span-12 p-1 flex flex-row">
-        <div class="flex items-start justify-between w-full">
-          <div class="form-group flex flex-row items-center w-full max-w-xl">
-            <label for="search" class="mr-2 whitespace-nowrap">Search</label>
-            <input
-              type="text"
-              id="search"
-              class="p-2 w-full text-sm border border-gray-500 rounded-lg"
-              placeholder="Search by artist name, lyrics, composer name or song title..."
-              v-model="filters.search"
-              @input="debouncedFetchData"
-            />
-          </div>
-        </div>
-      </div>
-
-      <!-- Lyrics Modal -->
-      <div
-        v-if="showLyricsDialog"
-        class="fixed inset-0 z-50 bg-gray-800/80 bg-opacity-10 flex items-center justify-center"
-        @click.self="showLyricsDialog = false"
-      >
-        <div
-          class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col"
+    <!-- Profile Info -->
+    <div class="flex flex-col items-center pb-10 mx-auto max-w-screen-sm">
+      <label class="cursor-pointer relative">
+        <img
+          class="w-24 h-24 mb-3 rounded-full shadow-lg object-cover"
+          :src="user.profileImage"
+          alt="User Image"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          class="absolute inset-0 opacity-0 cursor-pointer"
+          @change="handleImageChange"
+        />
+        <span
+          class="absolute bottom-0 right-0 text-xs text-white bg-black bg-opacity-50 px-2 py-0.5 rounded"
         >
-          <!-- Header -->
-          <div class="flex justify-between items-center mb-4 flex-shrink-0">
-            <h3 class="text-xl font-semibold">
-              {{ currentSongTitle }} - Lyrics
-            </h3>
-            <button
-              @click="showLyricsDialog = false"
-              class="text-gray-500 hover:text-gray-700 cursor-pointer"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
+          Change
+        </span>
+      </label>
 
-          <!-- Scrollable Lyrics  -->
-          <div
-            class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-          >
-            <div class="whitespace-pre-wrap pb-2 pr-2">
-              {{ currentLyrics }}
-            </div>
-          </div>
+      <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+        {{ user.first_name }} {{ user.last_name }}
+      </h5>
+      <span class="text-sm text-gray-500 dark:text-gray-400">
+        {{ user.email }}
+      </span>
+    </div>
 
-          <!-- Footer -->
-          <div class="mt-4 flex justify-end flex-shrink-0">
-            <button
-              @click="showLyricsDialog = false"
-              class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors cursor-pointer"
-            >
-              Close
-            </button>
-            <button
-              @click="copyLyrics()"
-              class="px-4 py-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors cursor-pointer"
-            >
-              Copy
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Songs table -->
+    <!-- Songs Table -->
+    <div class="grid grid-cols-12 gap-1">
       <div class="col-span-12 p-4 overflow-x-auto">
         <div class="w-full">
           <table class="w-full text-sm bg-blue-200 rounded-lg">
@@ -105,180 +48,175 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-if="createSongLoading">
-                <td colspan="6" class="py-5 text-center">
-                  Loading music records...
-                </td>
+              <tr v-if="loadingSongs">
+                <td colspan="7" class="py-5 text-center">Loading music records...</td>
               </tr>
               <tr v-else-if="songs.length === 0">
-                <td colspan="6" class="py-5 text-center">
-                  No music records found
+                <td colspan="7" class="py-5 text-center">No music records found</td>
+              </tr>
+              <tr
+                v-else
+                v-for="(song, index) in songs"
+                :key="index"
+                class="border-b border-opacity-20 hover:bg-blue-100 transition-colors"
+              >
+                <td class="px-2 py-4">{{ song.title }}</td>
+                <td class="px-2 py-4">{{ song.composer }}</td>
+                <td class="px-2 py-4">{{ song.artists }}</td>
+                <td
+                  class="px-2 py-4 cursor-pointer"
+                  @click="showLyrics(song.lyrics, song.title)"
+                >
+                  {{ truncateLyrics(song.lyrics) }}
+                </td>
+                <td class="px-2 py-4">
+                  <audio controls class="w-48 p-2">
+                    <source :src="getFullUrl(song.midi)" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </td>
+                <td class="px-2 py-4">
+                  <a
+                    :href="getFullUrl(song.pdf)"
+                    class="px-4 py-2 text-white bg-blue-500 hover:bg-blue-700 rounded transition-colors"
+                    download
+                  >
+                    Download PDF
+                  </a>
+                </td>
+                <td class="px-2 py-4">
+                  <a
+                    v-if="song.ytlink"
+                    :href="song.ytlink"
+                    target="_blank"
+                    class="text-blue-500 hover:underline"
+                  >
+                    Watch on YouTube
+                  </a>
+                  <span v-else class="text-gray-500">N/A</span>
                 </td>
               </tr>
-              <template v-else>
-                <tr
-                  v-for="(song, index) in songs"
-                  :key="index"
-                  class="border-b border-opacity-20 hover:bg-blue-100 transition-colors"
-                >
-                  <td class="px-2 py-4">{{ song.title }}</td>
-                  <td class="px-2 py-4">{{ song.composer }}</td>
-                  <td class="px-2 py-4">{{ song.artists }}</td>
-                  <td
-                    class="px-2 py-4 cursor-pointer lyrics-cell"
-                    @click="showLyrics(song.lyrics, song.title)"
-                  >
-                    {{ truncateLyrics(song.lyrics) }}
-                  </td>
-                  <td class="px-2 py-4">
-                    <div class="flex items-center gap-2">
-                      <audio controls class="w-48 p-2 audio-player">
-                        <source :src="getFullUrl(song.midi)" />
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                  </td>
-                  <td class="px-2 py-4">
-                    <div class="flex flex-col gap-2">
-                      <div class="flex gap-2">
-                        <a
-                          :href="getFullUrl(song.pdf)"
-                          class="inline-flex items-center px-4 py-2 text-white bg-blue-500 hover:bg-blue-700 rounded transition-colors"
-                          download
-                        >
-                          Download PDF
-                        </a>
-                        <button
-                          @click="showPdfPreview(song.pdf)"
-                          class="inline-flex items-center px-4 py-2 text-white bg-green-500 hover:bg-green-700 rounded transition-colors"
-                        >
-                          Preview
-                        </button>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-2 py-4">
-                    <a
-                      v-if="song.ytlink"
-                      :href="song.ytlink"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-blue-500 hover:underline"
-                    >
-                      Watch on YouTube
-                    </a>
-                    <span v-else class="text-gray-500">N/A</span>
-                  </td>
-                </tr>
-              </template>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-span-12 mt-4 pb-5">
-    <Pagination
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      @page-changed="fetchData"
-    />
-  </div>
 
-  <!-- ✅ Toast Notification -->
-  <transition name="fade">
-    <div
-      v-if="toastMessage"
-      class="fixed top-4 right-4 bg-green-500 text-white text-xl px-10 py-3 rounded shadow-lg z-[9999]"
-    >
-      {{ toastMessage }}
+    <!-- Pagination -->
+    <div class="col-span-12 mt-4 pb-5">
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @page-changed="fetchSongs"
+      />
     </div>
-  </transition>
+
+    <!-- Lyrics Modal -->
+    <div
+      v-if="showLyricsDialog"
+      class="fixed inset-0 z-50 bg-gray-800/80 flex items-center justify-center"
+      @click.self="showLyricsDialog = false"
+    >
+      <div class="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+          <h3 class="text-xl font-semibold">{{ currentSongTitle }} - Lyrics</h3>
+          <button @click="showLyricsDialog = false" class="text-gray-500 hover:text-gray-700">
+            ✕
+          </button>
+        </div>
+        <div class="flex-1 overflow-y-auto whitespace-pre-wrap">{{ currentLyrics }}</div>
+        <div class="mt-4 flex justify-end flex-shrink-0">
+          <button @click="showLyricsDialog = false" class="px-4 py-2 bg-gray-200 rounded-md mr-2">Close</button>
+          <button @click="copyLyrics" class="px-4 py-2 bg-blue-500 text-white rounded-md">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <transition name="fade">
+      <div v-if="toastMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-[9999]">
+        {{ toastMessage }}
+      </div>
+    </transition>
+
+  </div>
 
   <Footer />
 </template>
 
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import Header from "@/components/header/index/Main.vue";
 import Footer from "@/components/footer/index/Main.vue";
 import Pagination from "@/components/pagination/Main.vue";
 import { CREATE_SONG } from "@/graphql/Queries/createSong.graphql";
-import { debounce } from "lodash";
 
-// Environment configuration
+// Base API
 const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
-// Reactive state
-const showLyricsDialog = ref(false);
-const currentLyrics = ref("");
-const currentSongTitle = ref("");
+// User info
+const user = ref({
+  id: "",
+  email: "",
+  first_name: "",
+  last_name: "",
+  profileImage: "",
+});
+
+// Songs state
 const songs = ref([]);
 const currentPage = ref(1);
 const totalPages = ref(1);
-const filters = reactive({
-  page: 1,
-  first: 10,
-  search: "",
-});
+const loadingSongs = ref(false);
 
-// ✅ Toast state
+// Lyrics modal
+const showLyricsDialog = ref(false);
+const currentLyrics = ref("");
+const currentSongTitle = ref("");
+
+// Toast
 const toastMessage = ref("");
 
-// Apollo GraphQL Query
-const {
-  loading: createSongLoading,
-  onResult,
-  onError,
-  refetch,
-} = useQuery(
+// Fetch songs query
+const { onResult, onError, refetch } = useQuery(
   CREATE_SONG,
   () => ({
-    songsSearch: { search: filters.search },
+    songsSearch: { search: "" },
     page: currentPage.value,
-    first: filters.first,
+    first: 10,
+    user_id: user.value.id, // fetch songs of this user
   }),
-  { fetchPolicy: "network-only" }
+  { fetchPolicy: "network-only", enabled: false } // disabled auto-fetch
 );
 
-const fetchData = (page = 1) => {
+// Load user and fetch songs
+onMounted(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  user.value = {
+    ...storedUser,
+    profileImage: storedUser.profileImage || "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
+  };
+
+  if (user.value.id) fetchSongs();
+});
+
+// Fetch songs function
+const fetchSongs = (page = 1) => {
   currentPage.value = page;
+  loadingSongs.value = true;
   refetch({
-    songsSearch: { search: filters.search },
+    songsSearch: { search: "" },
     page: page,
-    first: filters.first,
-  });
-};
-
-const debouncedFetchData = debounce(() => {
-  currentPage.value = 1;
-  refetch({
-    songsSearch: { search: filters.search },
-    page: 1,
-    first: filters.first,
-  });
-}, 300);
-
-const getFullUrl = (path) => {
-  if (!path) return "";
-  return path.startsWith("http") ? path : `${baseUrl}${path}`;
-};
-
-const showPdfPreview = (path) => {
-  const fullUrl = getFullUrl(path);
-  if (fullUrl) window.open(fullUrl, "_blank");
+    first: 10,
+    user_id: user.value.id,
+  }).finally(() => (loadingSongs.value = false));
 };
 
 // Handle query results
 onResult((result) => {
-  if (result.data?.songs?.data) {
-    songs.value = result.data.songs.data;
-    totalPages.value = result.data.songs.paginatorInfo.lastPage || 1;
-  } else {
-    songs.value = [];
-    totalPages.value = 1;
-  }
+  songs.value = result.data?.songs?.data || [];
+  totalPages.value = result.data?.songs?.paginatorInfo?.lastPage || 1;
 });
 
 onError((error) => {
@@ -286,22 +224,7 @@ onError((error) => {
   songs.value = [];
 });
 
-watch(currentPage, (newPage) => {
-  refetch({
-    search: filters.search,
-    page: newPage,
-    first: filters.first,
-  });
-});
-
-watch(
-  () => filters.search,
-  () => {
-    currentPage.value = 1;
-  }
-);
-
-/* Lyrics dialog box */
+// Lyrics modal
 const showLyrics = (lyrics, title) => {
   currentLyrics.value = lyrics;
   currentSongTitle.value = title;
@@ -314,66 +237,40 @@ const truncateLyrics = (lyrics) => {
   return words.length > 5 ? words.slice(0, 5).join(" ") + "..." : lyrics;
 };
 
-/* Copy lyrics with toast */
+// Copy lyrics
 const copyLyrics = async () => {
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(currentLyrics.value);
-    } else {
-      const textarea = document.createElement("textarea");
-      textarea.value = currentLyrics.value;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
     }
-
-    // ✅ Close modal after copy
-    showLyricsDialog.value = false;
-
-    // ✅ Show toast
     toastMessage.value = "Lyrics copied ✅";
-    setTimeout(() => {
-      toastMessage.value = "";
-    }, 3000);
+    setTimeout(() => (toastMessage.value = ""), 3000);
+    showLyricsDialog.value = false;
   } catch (err) {
     console.error("Failed to copy lyrics:", err);
   }
 };
+
+// Helpers
+const getFullUrl = (path) => (path?.startsWith("http") ? path : `${baseUrl}${path}`);
+
+const handleImageChange = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    user.value.profileImage = reader.result;
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    localStorage.setItem("user", JSON.stringify({ ...storedUser, profileImage: reader.result }));
+  };
+  reader.readAsDataURL(file);
+};
 </script>
 
 <style scoped>
-table {
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-th,
-td {
-  padding: 12px 15px;
-  background-color: rgba(219, 234, 254, 0.3);
-}
-
-th {
-  background-color: #cbd5e1;
-}
-
-tr:hover td {
-  background-color: rgba(191, 219, 254, 0.3);
-}
-
 .audio-player::-webkit-media-controls-panel {
   background-color: #bfdbfe;
 }
-
-.audio-player::-webkit-media-controls-play-button,
-.audio-player::-webkit-media-controls-mute-button {
-  filter: invert(1);
-}
-
-/* ✅ Toast transition */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;
